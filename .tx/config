@@ -1,0 +1,14 @@
+[main]
+host = https://www.transifex.com
+
+[edx-platform.appsembler-credentials-extensions]
+file_filter = appsembler_credentials_extensions/conf/locale/<lang>/LC_MESSAGES/django.po
+source_file = appsembler_credentials_extensions/conf/locale/en/LC_MESSAGES/django.po
+source_lang = en
+type = PO
+
+[edx-platform.appsembler-credentials-extensions-js]
+file_filter = appsembler_credentials_extensions/conf/locale/<lang>/LC_MESSAGES/djangojs.po
+source_file = appsembler_credentials_extensions/conf/locale/en/LC_MESSAGES/djangojs.po
+source_lang = en
+type = PO
