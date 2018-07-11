@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-appsembler_credentials_extensions Django application initialization.
+appsembler_credentials_extensions.course_certs_extensions Django application initialization.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -13,4 +13,4 @@ class AppsemblerCredentialsCourseCertsConfig(AppConfig):
     Configuration for the appsembler_credentials_course_certs Django application.
     """
 
-    name = 'appsembler_credentials_course_certs'
+    name = 'appsembler_credentials_course_certs_extensions'
