@@ -27,8 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    """
-    Command to run all appsembleredx per-course setup.
+    """Command to run all appsembleredx per-course setup.
 
     Examples:
         ./manage.py create_course_certificates <course_id_1> <course_id_2> - creates certs in courses with keys course_id_1 and course_id_2
@@ -78,7 +77,7 @@ class Command(BaseCommand):
         replace_certs = False
 
         if len(args) == 0 and not all_option:
-            raise CommandError(u"appsembler_setup_courses requires one or more arguments: <course_id>, or --all")
+            raise CommandError(u"create_course_certificates requires one or more arguments: <course_id>, or --all")
 
         store = modulestore()
 
@@ -111,8 +110,7 @@ class Command(BaseCommand):
                     course.save()
 
         for course_key in course_keys:
-            # call functions that are normally signal handlers 
-            signals._default_mode_on_course_publish(store.__class__, course_key)
+            # call functions that are normally signal handlers
             signals._change_cert_defaults_on_pre_publish(store.__class__, course_key)
             signals.enable_self_generated_certs(store.__class__, course_key)
             signals._make_default_active_certificate(

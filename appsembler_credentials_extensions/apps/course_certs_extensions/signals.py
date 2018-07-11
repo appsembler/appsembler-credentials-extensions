@@ -51,7 +51,7 @@ def disable_if_certs_feature_off(func):
     @wraps(func)
     def noop_handler(*args, **kwargs):
         logger.warn('{} signal handler disabled since CERTIFICATES_ENABLED is False'.format(func.__name__))
-
+    import pdb; pdb.set_trace()
     if settings.FEATURES.get('CERTIFICATES_ENABLED', False):
         return func
     else:
@@ -126,21 +126,6 @@ def store_theme_signature_img_as_asset(course_key, theme_asset_path):
     return "{}{}".format(path_extra, content.location.to_deprecated_string())
 
 
-@receiver(SignalHandler.course_published)
-@disable_if_certs_feature_off
-def _default_mode_on_course_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
-    """
-    Catches the signal that a course has been published in Studio and
-    creates a CourseMode in the default mode
-    """
-    try:
-        default_mode = CourseMode.objects.get(course_id=course_key, mode_slug=app_settings.DEFAULT_COURSE_MODE_SLUG)
-    except ObjectDoesNotExist:
-        default_mode = CourseMode(course_id=course_key, mode_slug=app_settings.DEFAULT_COURSE_MODE_SLUG,
-                                  mode_display_name=app_settings.mode_name_from_slug)
-        default_mode.save()
-
-
 @receiver(SignalHandler.pre_publish)
 @disable_if_certs_feature_off
 def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
@@ -156,13 +141,15 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
 
     store = modulestore()
     course = store.get_course(course_key)
-    if course.cert_defaults_set:
-        return
+    # TODO replace this logic w/o using the custom mixin fields
+    # if course.cert_defaults_set:
+    #     return
 
     course.certificates_display_behavior = 'early_with_info'
     course.certificates_show_before_end = True  # deprecated anyhow
     course.cert_html_view_enabled = True
-    course.cert_defaults_set = True
+    # TODO replace this logic w/o using the custom mixin fields
+    # course.cert_defaults_set = True
     course.save()
     try:
         store.update_item(course, course._edited_by)
@@ -224,8 +211,9 @@ def _make_default_active_certificate(sender, course_key, replace=False, force=Fa
 
     store = modulestore()
     course = store.get_course(course_key)
-    if course.active_default_cert_created and not replace:
-        return
+    # TODO replace this logic w/o using the custom mixin fields
+    # if course.active_default_cert_created and not replace:
+    #     return
 
     default_cert_data = make_default_cert(course_key)
     new_cert = store_certificates.CertificateManager.deserialize_certificate(course, default_cert_data)
@@ -235,7 +223,8 @@ def _make_default_active_certificate(sender, course_key, replace=False, force=Fa
         course.certificates['certificates'] = [new_cert.certificate_data, ]
     else:
         course.certificates['certificates'].append(new_cert.certificate_data)
-    course.active_default_cert_created = True
+    # TODO replace this logic w/o using the custom mixin fields
+    # course.active_default_cert_created = True
     course.save()
     try:
         store.update_item(course, course._edited_by)
