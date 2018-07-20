@@ -24,7 +24,7 @@ def enable_course_certificates(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course_certs_extensions', '0001_data_set_default_course_mode'),
+        ('appsembler_course_certs_extensions', '0001_data_set_default_course_mode'),
     ]
 
     operations = [
