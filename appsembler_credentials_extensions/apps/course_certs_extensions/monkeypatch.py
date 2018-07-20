@@ -8,7 +8,7 @@ import logging
 from django.conf import settings
 
 # both are in sys.modules and need to be monkeypatched
-from lms.djangoapps.certificates.signals import toggle_self_generated_certs as toggle_self_generated_certs_fulllpath
+from lms.djangoapps.certificates.signals import toggle_self_generated_certs as toggle_self_generated_certs_fullpath
 from certificates.signals import toggle_self_generated_certs
 
 from appsembler_credentials_extensions.common.course_extensions.mixins import get_CourseDescriptor_mixins
@@ -47,11 +47,11 @@ logger.warn('Monkeypatching lms.djangoapps.certificates.views.webview._update_co
 orig__update_course_context = webview._update_course_context
 webview._update_course_context = _update_course_context
 
-# override certificates handler which always enables self-gen'd certs for self-paced courses
-# so that it only enables self-gen'd certs on self-paced if we set feature flag for it
+# replace certificates handler which always enables self-gen'd certs for self-paced courses
+# with ours that only enables self-gen'd certs on self-paced if we set feature flag for it
 # we have to disable celery tasks already registered for signal handlers in edx-platform
-logger.warn('Monkeypatching lms.djangoapps.certificates.signals.appsembler_listen_for_course_pacing_changed to limit enabling of self-generated certs on self-paced courses by feature flag.')
+logger.warn('Monkeypatching lms.djangoapps.certificates.signals.toggle_self_generated_certs to limit enabling of self-generated certs on self-paced courses by feature flag.')
 orig_toggle_self_generated_certs = toggle_self_generated_certs
-orig_toggle_self_generated_certs_fullpath = toggle_self_generated_certs_fulllpath
+orig_toggle_self_generated_certs_fullpath = toggle_self_generated_certs_fullpath
 orig_toggle_self_generated_certs.delay = lambda course_key, enable: None
 orig_toggle_self_generated_certs_fullpath.delay = lambda course_key, enable: None

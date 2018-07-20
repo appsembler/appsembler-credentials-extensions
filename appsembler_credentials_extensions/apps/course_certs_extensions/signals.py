@@ -157,9 +157,9 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
         store.update_item(course, 0)
 
 
-# this isn't a monkeypatch but an additional signal handler
+# TODO: this isn't a monkeypatch but an additional signal handler
 # The original is retained but calls a patched noop task
-# if I could figure out how to monkeypatch a decorated function properly 
+# if I could figure out how to monkeypatch a decorated function properly
 # could just monkeypatch the task
 @receiver(COURSE_PACING_CHANGE, dispatch_uid="appsembler_course_pacing_changed")
 def _listen_for_course_pacing_changed(sender, course_key, course_self_paced, **kwargs):  # pylint: disable=unused-argument
