@@ -8,8 +8,8 @@ import json
 import logging
 import os
 
+from celery.task import task
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import get_storage_class
 from django.dispatch.dispatcher import receiver
 
@@ -24,10 +24,11 @@ except ImportError:
         from cms.djangoapps.contentstore.views import certificates as store_certificates
     except ImportError:
         pass  # some of the other imports in certificates will fail in LMS context but they aren't needed
-from course_modes.models import CourseMode
+
+
 from certificates import models as cert_models
-from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from opaque_keys.edx.keys import CourseKey
+from openedx.core.djangoapps.models.course_details import COURSE_PACING_CHANGE
 from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.content import StaticContent
 from xmodule.modulestore.django import SignalHandler, modulestore
@@ -51,7 +52,6 @@ def disable_if_certs_feature_off(func):
     @wraps(func)
     def noop_handler(*args, **kwargs):
         logger.warn('{} signal handler disabled since CERTIFICATES_ENABLED is False'.format(func.__name__))
-    import pdb; pdb.set_trace()
     if settings.FEATURES.get('CERTIFICATES_ENABLED', False):
         return func
     else:
@@ -157,47 +157,40 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
         store.update_item(course, 0)
 
 
-@receiver(SignalHandler.pre_publish)
-def _change_badges_setting_on_pre_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
-    store = modulestore()
-    course = store.get_course(course_key)
-    use_badges = settings.FEATURES.get('ENABLE_OPENBADGES', False)
-    if not use_badges or app_settings.DISABLE_COURSE_COMPLETION_BADGES:
-        course.issue_badges = False
-    course.save()
-    try:
-        store.update_item(course, course._edited_by)
-    except AttributeError:
-        store.update_item(course, 0)
-
-
-@receiver(SignalHandler.course_published)
-@disable_if_certs_feature_off
-def enable_self_generated_certs(sender, course_key, **kwargs):  # pylint: disable=unused-argument
+# this isn't a monkeypatch but an additional signal handler
+# The original is retained but calls a patched noop task
+# if I could figure out how to monkeypatch a decorated function properly 
+# could just monkeypatch the task
+@receiver(COURSE_PACING_CHANGE, dispatch_uid="appsembler_course_pacing_changed")
+def _listen_for_course_pacing_changed(sender, course_key, course_self_paced, **kwargs):  # pylint: disable=unused-argument
     """
-    If not already enabled, enable self-generated certificates on course if:
+    Catch the signal that course pacing has changed.and
+
+    Enable/disable the self-generated certificates according to course-pacing.
+    """
+    appsembler_toggle_self_generated_certs.delay(unicode(course_key), course_self_paced)
+
+
+@task
+def appsembler_toggle_self_generated_certs(course_key, course_self_paced):
+    """
+    Enable or disable self-generated certificates for a course according to pacing.
+
+    Enable self-generated certificates on course if:
     course is a self-paced course and self-generated certs on self-paced not explicitly disabled
     course is not self-paced and self-generated certs are explicitly enabled
     """
     course_key = unicode(course_key)
     course_key = CourseKey.from_string(course_key)
-    course = CourseOverview.get_from_id(course_key)
-    is_enabled_for_course = cert_models.CertificateGenerationCourseSetting.is_enabled_for_course(course_key)
-    if is_enabled_for_course:
-        return
-
-    if course.self_paced and app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED:
-        return
-
-    if not course.self_paced and not app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS:
-        return
-    cert_models.CertificateGenerationCourseSetting.set_enabled_for_course(course_key, True)
+    enable = (course_self_paced and not app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED) or \
+        (course_self_paced and app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS)
+    cert_models.CertificateGenerationCourseSetting.set_enabled_for_course(course_key, enable)
 
 
 @receiver(SignalHandler.pre_publish)
 @disable_if_certs_feature_off
 @cms_only
-def _make_default_active_certificate(sender, course_key, replace=False, force=False, **kwargs):  # pylint: disable=unused-argument
+def _make_default_active_certificate(sender, course_key, replace=False, force=False, **kwargs):
     """
     Create an active default certificate on the course.  If we pass replace=True, it will
     overwrite existing active certs.  If we pass force=True (the management command always
