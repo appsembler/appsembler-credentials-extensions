@@ -55,6 +55,7 @@ quality: ## check coding style with pycodestyle and pylint
 requirements: ## install development environment requirements
 	pip install -qr requirements/dev.txt --exists-action w
 	pip-sync requirements/dev.txt requirements/private.* requirements/test.txt
+	pip install -e tests/edx_platform_mock  # Add mock modules for development from the edX-platform
 
 test: clean ## run tests in the current virtualenv
 	py.test
