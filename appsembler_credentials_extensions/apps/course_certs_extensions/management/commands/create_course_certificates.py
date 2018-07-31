@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
-    """Command to run all appsembleredx per-course setup.
+    """Command to run all appsembler_course_extensions per-course setup.
 
     Examples:
         ./manage.py create_course_certificates <course_id_1> <course_id_2> - creates certs in courses with keys course_id_1 and course_id_2
