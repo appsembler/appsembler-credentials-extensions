@@ -10,7 +10,7 @@ from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 
-from appsembleredx import signals
+from appsembler_credentials_extensions.apps.badges_extensions import signals
 
 
 logger = logging.getLogger(__name__)
