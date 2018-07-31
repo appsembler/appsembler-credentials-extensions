@@ -22,7 +22,7 @@ enum34==1.1.6             # via astroid
 first==2.0.1              # via pip-tools
 futures==3.2.0            # via caniusepython3, isort
 idna==2.7                 # via requests
-inflect==0.3.1            # via jinja2-pluralize
+inflect==1.0.0            # via jinja2-pluralize
 isort==4.3.4
 jinja2-pluralize==0.3.0   # via diff-cover
 jinja2==2.10              # via diff-cover, jinja2-pluralize
@@ -43,7 +43,7 @@ pylint-celery==0.3        # via edx-lint
 pylint-django==0.7.2      # via edx-lint
 pylint-plugin-utils==0.4  # via pylint-celery, pylint-django
 pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
-pyparsing==2.2.0          # via packaging
+pyparsing==2.0.7          # via packaging
 pytz==2018.5              # via django
 pyyaml==3.13              # via edx-i18n-tools
 requests-toolbelt==0.8.0  # via twine
@@ -53,7 +53,7 @@ six==1.11.0               # via astroid, diff-cover, edx-i18n-tools, edx-lint, p
 snowballstemmer==1.2.1    # via pydocstyle
 tox-battery==0.5.1
 tox==3.1.2
-tqdm==4.23.4              # via twine
+tqdm==4.24.0              # via twine
 twine==1.11.0
 urllib3==1.23             # via requests
 virtualenv==16.0.0        # via tox

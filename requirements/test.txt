@@ -12,7 +12,7 @@ more-itertools==4.2.0     # via pytest
 pluggy==0.6.0             # via pytest
 py==1.5.4                 # via pytest
 pytest-cov==2.5.1
-pytest-django==3.3.2
+pytest-django==3.3.3
 pytest==3.6.3             # via pytest-cov, pytest-django
 pytz==2018.5              # via django
 six==1.11.0               # via more-itertools, pytest

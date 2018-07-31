@@ -15,6 +15,17 @@ webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
 endef
 export BROWSER_PYSCRIPT
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
+OS_NAME := $(shell uname -s)
+
+ifeq ($(OS_NAME),Linux)
+	TEST_PRE = @sudo service mongodb start
+	TEST_POST = @sudo service mongodb stop
+endif
+ifeq ($(OS_NAME),Darwin)
+	TEST_PRE = @brew services start mongodb
+	TEST_POST = @brew services stop mongodb
+endif
+
 
 help: ## display this help message
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -52,18 +63,55 @@ upgrade: ## update the requirements/*.txt files with the latest packages satisfy
 quality: ## check coding style with pycodestyle and pylint
 	tox -e quality
 
-requirements: ## install development environment requirements
+system-deps:
+
+ifeq ($(OS_NAME),Linux)
+	@sudo apt-get install -y graphviz graphviz-dev
+	@sudo apt-get install libxml2-dev libxmlsec1-dev pkg-config
+	@sudo apt-get install mongodb-org-server
+endif
+
+ifeq ($(OS_NAME),Darwin)
+	@brew install graphviz gettext
+	@brew install libxmlsec1 libxml2 pkg-config
+	@brew install --ignore-dependencies mongodb
+endif
+
+requirements: system-deps ## install development environment requirements
 	pip install -qr requirements/dev.txt --exists-action w
-	pip-sync requirements/dev.txt requirements/private.* requirements/test.txt
-	pip install -e tests/edx_platform_mock  # Add mock modules for development from the edX-platform
+	pip install -r requirements/dev.txt -r requirements/OpenedX_${EDX_PLATFORM_VERSION}.txt
+	# pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/pre.txt  # pyparsing uninstall/reinstall errors
+	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/base.txt
+	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/github.txt
+	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/paver.txt
+	cd ${VIRTUAL_ENV}/src/open-edx && pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/local.txt
+	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/appsembler.txt
+	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/post.txt
 
 test: clean ## run tests in the current virtualenv
+	$(TEST_PRE)
 	py.test
+	$(TEST_POST)
+
+test_course_certs:  clean ## run only course_certs_extensions tests
+	$(TEST_PRE)
+	py.test appsembler_credentials_extensions/apps/course_certs_extensions/tests
+	$(TEST_POST)
+
+test_badges: clean ## run only badges_extensions tests
+	$(TEST_PRE)
+	py.test appsembler_credentials_extensions/apps/badges_extensions/tests
+	$(TEST_POST)
+
+test_course_extensions: clean ## run only course_extensions tests
+	$(TEST_PRE)
+	py.test appsembler_credentials_extensions/common/course_extensions/tests
+	$(TEST_POST)
 
 diff_cover: test
 	diff-cover coverage.xml
 
-test-all: ## run tests on every supported Python/Django combination
+test-all: ## run tests on every supported Python/Open_edX combination
 	tox -e quality
 	tox
 
