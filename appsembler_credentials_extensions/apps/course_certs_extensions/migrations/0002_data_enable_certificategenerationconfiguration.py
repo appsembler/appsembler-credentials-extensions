@@ -8,7 +8,7 @@ from appsembler_credentials_extensions.apps.course_certs_extensions.helpers impo
 
 
 def get_models(apps):
-    CertificateGenerationConfiguration = apps.get_model("certificates", "CertificateGenerationConfiguration")
+    CertificateGenerationConfiguration = apps.get_model("lms.djangoapps.certificates", "CertificateGenerationConfiguration")
     return (CertificateGenerationConfiguration,)
 
 
@@ -24,7 +24,7 @@ def enable_course_certificates(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('appsembler_course_certs_extensions', '0001_data_set_default_course_mode'),
+        ('course_certs_extensions', '0001_data_set_default_course_mode'),
     ]
 
     operations = [

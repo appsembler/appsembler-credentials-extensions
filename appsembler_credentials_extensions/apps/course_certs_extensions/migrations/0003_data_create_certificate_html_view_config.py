@@ -47,7 +47,7 @@ def configure_course_certificate_html_view(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('appsembler_course_certs_extensions', '0002_data_enable_certificategenerationconfiguration'),
+        ('course_certs_extensions', '0002_data_enable_certificategenerationconfiguration'),
     ]
 
     operations = [
