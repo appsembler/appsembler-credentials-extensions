@@ -4,14 +4,12 @@ from __future__ import absolute_import, unicode_literals
 
 from functools import wraps
 import json
-import logging
 import mock
 import os
 
 from django.conf import settings
 
-from certificates.models import (
-    CertificateGenerationConfiguration, CertificateGenerationCourseSetting)
+from certificates.models import CertificateGenerationConfiguration
 from certificates import api as certs_api
 from openedx.core.djangoapps.self_paced.models import SelfPacedConfiguration
 from xmodule.modulestore.django import modulestore
@@ -19,9 +17,6 @@ from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 
 from appsembler_credentials_extensions.apps.course_certs_extensions import signals
-
-
-logger = logging.getLogger(__name__)
 
 
 def certs_feature_enabled(func):
