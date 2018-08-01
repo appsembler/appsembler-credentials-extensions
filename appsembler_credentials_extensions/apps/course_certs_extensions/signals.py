@@ -101,12 +101,13 @@ def make_default_cert(course_key):
 
 
 def store_theme_signature_img_as_asset(course_key, theme_asset_path):
-    """ 
+    """
     to be able to edit or delete signatories and Certificates properly
     we must store signature PNG file as course content asset.
     Store file from theme as asset.
     Return static asset URL path
     """
+
     filename = theme_asset_path.split('/')[-1]
     static_storage = get_storage_class(settings.STATICFILES_STORAGE)()
     path = static_storage.path(theme_asset_path)

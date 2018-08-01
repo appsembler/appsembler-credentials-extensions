@@ -7,9 +7,8 @@ import json
 import logging
 import mock
 import os
-import unittest
 
-# from django.test import TestCase
+from django.conf import settings
 
 from certificates.models import (
     CertificateGenerationConfiguration, CertificateGenerationCourseSetting)
@@ -140,7 +139,6 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
             self.assertTrue(certs_api.cert_generation_enabled(course.id))
 
 
-@unittest.skipUnless(os.environ.get('SERVICE_VARIANT', None) == 'cms', 'only runs in CMS test context')
 class CertsCreationSignalsTest(BaseCertSignalsTestCase):
     """ Tests for signal handlers which set up certificates.  None of the handlers should do anything
         if certificates feature is not enabled.
@@ -150,8 +148,17 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
         """ Verify that an file passed as a signature image is stored as a course content asset
         """
         # this image exists on the filesystem from certificates app static files
-        path = "/static/certificates/images/demo-sig1.png"
-        signals.store_theme_signature_img_as_asset(self.course.id, path)
+        asset_file = "demo-sig1.png"
+
+        class FakeStaticStorage(object):
+            def path(self, asset_path):
+                return os.path.join(settings.COMMON_TEST_DATA_ROOT, asset_file)
+
+        def fake_get_storage_class(foo):
+            return FakeStaticStorage
+
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class):
+            signals.store_theme_signature_img_as_asset(self.course.id, asset_file)
 
     def test_make_default_cert_string(self):
         """ Verify helper function generates a string for default certificate creation

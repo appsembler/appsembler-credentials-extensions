@@ -16,8 +16,8 @@ def root(*args):
     """Get the absolute path of the given path relative to the project root."""
     return join(abspath(dirname(__file__)), *args)
 
-
-COMMON_TEST_DATA_ROOT = COMMON_ROOT / "test" / "data"
+PROJECT_ROOT = path(__file__).abspath().dirname()
+COMMON_TEST_DATA_ROOT = PROJECT_ROOT / "tests" / "data"
 
 DATABASES = {
     'default': {
