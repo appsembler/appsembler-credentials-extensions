@@ -55,7 +55,7 @@ def disable_if_certs_feature_off(func):
     if settings.FEATURES.get('CERTIFICATES_ENABLED', False):
         return func
     else:
-        noop_handler.__name__ = 'noop_handler_{}'.format(func.__name__)
+        noop_handler.__name__ = str('noop_handler_{}'.format(func.__name__))
         return noop_handler
 
 
@@ -168,11 +168,11 @@ def _listen_for_course_pacing_changed(sender, course_key, course_self_paced, **k
 
     Enable/disable the self-generated certificates according to course-pacing.
     """
-    appsembler_toggle_self_generated_certs.delay(unicode(course_key), course_self_paced)
+    toggle_self_generated_certs.delay(unicode(course_key), course_self_paced)
 
 
 @task
-def appsembler_toggle_self_generated_certs(course_key, course_self_paced):
+def toggle_self_generated_certs(course_key, course_self_paced):
     """
     Enable or disable self-generated certificates for a course according to pacing.
 
@@ -182,8 +182,8 @@ def appsembler_toggle_self_generated_certs(course_key, course_self_paced):
     """
     course_key = unicode(course_key)
     course_key = CourseKey.from_string(course_key)
-    enable = (course_self_paced and not app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED) or \
-        (course_self_paced and app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS)
+    enable = False if app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED is True else \
+        (course_self_paced or app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS)
     cert_models.CertificateGenerationCourseSetting.set_enabled_for_course(course_key, enable)
 
 

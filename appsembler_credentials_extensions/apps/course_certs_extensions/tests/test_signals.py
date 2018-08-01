@@ -9,21 +9,17 @@ import mock
 import os
 import unittest
 
-from django.core.exceptions import ObjectDoesNotExist
+# from django.test import TestCase
 
-try:  # LMS
-    from certificates.models import (
-        CertificateGenerationConfiguration, CertificateGenerationCourseSetting)
-except ImportError:  # CMS
-    from lms.djangoapps.certificates.models import (
-        CertificateGenerationConfiguration, CertificateGenerationCourseSetting) 
-from course_modes.models import CourseMode
+from certificates.models import (
+    CertificateGenerationConfiguration, CertificateGenerationCourseSetting)
+from certificates import api as certs_api
 from openedx.core.djangoapps.self_paced.models import SelfPacedConfiguration
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 
-from appsembleredx import signals
+from appsembler_credentials_extensions.apps.course_certs_extensions import signals
 
 
 logger = logging.getLogger(__name__)
