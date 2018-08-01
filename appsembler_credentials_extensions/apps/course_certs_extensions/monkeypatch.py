@@ -11,7 +11,7 @@ from django.conf import settings
 from lms.djangoapps.certificates.signals import toggle_self_generated_certs as toggle_self_generated_certs_fullpath
 from certificates.signals import toggle_self_generated_certs
 
-from appsembler_credentials_extensions.common.course_extensions.mixins import get_CourseDescriptor_mixins
+from .mixins import get_CourseDescriptor_mixins
 
 
 logger = logging.getLogger(__name__)

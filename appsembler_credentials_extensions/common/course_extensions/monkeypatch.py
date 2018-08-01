@@ -5,7 +5,7 @@ from __future__ import absolute_import, unicode_literals
 
 from xmodule import course_module
 
-from appsembler_credentials_extensions.common.course_extensions import mixins
+from . import mixins
 
 import logging
 logger = logging.getLogger(__name__)

@@ -33,7 +33,7 @@ from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.content import StaticContent
 from xmodule.modulestore.django import SignalHandler, modulestore
 
-from appsembler_credentials_extensions.apps.course_certs_extensions import app_settings
+from . import app_settings
 
 
 DEFAULT_CERT = """
