@@ -61,30 +61,15 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
         if certificates feature is not enabled.
     """
 
-    @mock.patch.dict('appsembleredx.signals.settings.FEATURES', {'CERTIFICATES_ENABLED': False})
+    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.signals.settings.FEATURES', {'CERTIFICATES_ENABLED': False})
     def test_signal_handlers_disabler_decorator(self):
         """ Verify decorator works to return a noop function if CERTIFICATES_ENABLED is False
         """
         mock_decorated = mock.Mock()
-        mock_decorated.__name__ = 'mocked'  # needed for functools.wrap
+        mock_decorated.__name__ = str('mocked')  # needed for functools.wrap
         ret_func = signals.disable_if_certs_feature_off(mock_decorated)
         self.assertNotEqual(ret_func, mock_decorated)
         self.assertTrue('noop_handler' in ret_func.__name__)
-
-    @certs_feature_enabled
-    def test_default_course_mode_changed_on_publish(self):
-        """ Verify the signal handler sets new default course mode
-        """
-        # there should be no coursemode object for the course
-        self.assertRaises(ObjectDoesNotExist, CourseMode.objects.get, **{"course_id": self.course.id})
-        # publish signal creates a new coursemode object
-        signals._default_mode_on_course_publish('store', self.course.id)
-        newmode = CourseMode.objects.get(course_id=self.course.id)
-        self.assertEqual(newmode.mode_slug, 'honor' )
-        # second publish doesn't create a new coursemode object
-        signals._default_mode_on_course_publish('store', self.course.id)
-        modes = CourseMode.objects.filter(course_id=self.course.id)
-        self.assertEqual(len(modes), 1)
 
     @certs_feature_enabled
     def test_cert_related_advanced_settings_as_expected_by_default(self):
@@ -107,7 +92,7 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
         self.assertFalse(course.cert_html_view_enabled)
 
         self.mock_app_settings.USE_OPEN_ENDED_CERTS_DEFAULTS = True
-        with mock.patch('appsembleredx.signals.app_settings', new=self.mock_app_settings):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
             signals._change_cert_defaults_on_pre_publish('store', self.course.id)
             course = self.store.get_course(self.course.id)
             self.assertEqual(course.certificates_display_behavior, 'early_with_info')
@@ -116,15 +101,12 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
 
     @certs_feature_enabled
     def test_enable_self_generated_certs_on_publish_for_self_paced(self):
-        """ Verify that self-generated certs are not enabled for self-paced courses
-            if it is explicitly disabled by setting
+        """ Verify the default behavior is maintained, self-generated certs enabled
+            for self-paced courses
         """
-        course = self.store.get_course(self.course.id)
-        # this should fail when we move to Ginkgo
-        self.assertFalse(CertificateGenerationCourseSetting.is_enabled_for_course(self.course.id))
-        signals.enable_self_generated_certs('store', self.course.id)
-        course = self.store.get_course(self.course.id)
-        self.assertTrue(CertificateGenerationCourseSetting.is_enabled_for_course(course.id))
+        self.assertFalse(certs_api.cert_generation_enabled(self.course.id))
+        signals.toggle_self_generated_certs(self.course.id, self.course.self_paced)
+        self.assertTrue(certs_api.cert_generation_enabled(self.course.id))
 
     @certs_feature_enabled
     def test_dont_enable_self_generated_certs_on_publish_for_self_paced_when_disabled_by_setting(self):
@@ -132,37 +114,35 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
             if it is explicitly disabled by setting
         """
         self.mock_app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED = True
-        with mock.patch('appsembleredx.signals.app_settings', new=self.mock_app_settings):
-            signals.enable_self_generated_certs('store', self.course.id)
-            course = self.store.get_course(self.course.id)
-            self.assertFalse(CertificateGenerationCourseSetting.is_enabled_for_course(course.id))
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
+            signals.toggle_self_generated_certs(self.course.id, self.course.self_paced)
+            self.assertFalse(certs_api.cert_generation_enabled(self.course.id))
 
     @certs_feature_enabled
     def test_dont_enable_self_generated_certs_on_publish_for_instructor_paced(self):
-        """ Verify that self-generated certs are not enabled for self-paced courses
-            if it is explicitly disabled by setting
+        """ Verify that self-generated certs are not enabled for instructor-paced courses
+            unless explicitly enabled by setting
         """
-        self.course = CourseFactory.create(self_paced=False)
-        signals.enable_self_generated_certs('store', self.course.id)
-        course = self.store.get_course(self.course.id)
-        self.assertFalse(CertificateGenerationCourseSetting.is_enabled_for_course(course.id))
+        course = CourseFactory.create(self_paced=False)
+        self.assertFalse(certs_api.cert_generation_enabled(course.id))
+        signals.toggle_self_generated_certs(course.id, course.self_paced)
+        self.assertFalse(certs_api.cert_generation_enabled(course.id))
 
     @certs_feature_enabled
     def test_enable_self_generated_certs_on_publish_for_instructor_paced_if_always_enabled_by_setting(self):
-        """ Verify that self-generated certs are not enabled for self-paced courses
-            if it is explicitly disabled by setting
+        """ Verify that self-generated certs are enabled for self-paced courses
+            if it is explicitly enabled by setting
         """
         self.mock_app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS = True
-        with mock.patch('appsembleredx.signals.app_settings', new=self.mock_app_settings):
-            self.course = CourseFactory.create(self_paced=False)
-            signals.enable_self_generated_certs('store', self.course.id)
-            course = self.store.get_course(self.course.id)
-            self.assertTrue(CertificateGenerationCourseSetting.is_enabled_for_course(course.id))
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
+            course = CourseFactory.create(self_paced=False)
+            signals.toggle_self_generated_certs(course.id, course.self_paced)
+            self.assertTrue(certs_api.cert_generation_enabled(course.id))
 
 
 @unittest.skipUnless(os.environ.get('SERVICE_VARIANT', None) == 'cms', 'only runs in CMS test context')
 class CertsCreationSignalsTest(BaseCertSignalsTestCase):
-    """ Tests for signal handlers which set up certificates.  None of the handlers should do anything 
+    """ Tests for signal handlers which set up certificates.  None of the handlers should do anything
         if certificates feature is not enabled.
     """
 
@@ -181,7 +161,7 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
 
         self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = {}
         self.mock_app_settings.ACTIVATE_DEFAULT_CERTS = True
-        with mock.patch('appsembleredx.signals.app_settings', new=self.mock_app_settings):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
             cert_string = signals.make_default_cert(self.course.id)
             cert_dict = json.loads(cert_string)
             self.assertEqual(cert_dict["course_title"], "")
