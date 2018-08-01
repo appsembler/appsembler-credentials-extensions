@@ -10,7 +10,7 @@ from new import instancemethod
 from xblock.fields import Scope, String, Float, XBlockMixin
 from xmodule import course_module, xml_module
 
-from .course_extensions import settings
+from . import settings
 
 
 # Make '_' a no-op so we can scrape strings

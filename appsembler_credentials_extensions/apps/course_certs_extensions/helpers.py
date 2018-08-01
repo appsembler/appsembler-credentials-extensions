@@ -11,6 +11,20 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
+def cms_import_helper():
+    # if we are in CMS we need to mock out unimportable modules
+    # load a fake certificates.views.support module for now
+    class FakeModule(object):
+        """I'm fake."""
+
+        __path__ = []
+
+    import sys
+    logger.warn("Setting fake certificates.views.support module for CMS.  Not used in Studio")
+    sys.modules['lms.djangoapps.certificates.views.support'] = FakeModule()  # load an emtpty module
+    sys.modules['certificates.views.support'] = FakeModule()  # load an emtpty module
+
+
 def disable_if_certs_feature_off(func):
     @wraps(func)
     def noop_func(*args, **kwargs):

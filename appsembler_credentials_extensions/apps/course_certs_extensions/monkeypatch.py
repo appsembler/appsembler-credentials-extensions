@@ -11,24 +11,14 @@ from django.conf import settings
 from lms.djangoapps.certificates.signals import toggle_self_generated_certs as toggle_self_generated_certs_fullpath
 from certificates.signals import toggle_self_generated_certs
 
-from .mixins import get_CourseDescriptor_mixins
+from appsembler_credentials_extensions.common.course_extensions.mixins import get_CourseDescriptor_mixins
 
 
 logger = logging.getLogger(__name__)
 
-
-if 'cms' in settings.SETTINGS_MODULE:
-    # if we are in CMS we need to mock out unimportable modules
-    # load a fake certificates.views.support module for now
-    class FakeModule(object):
-        """I'm fake."""
-
-        __path__ = []
-
-    import sys
-    logger.warn("Setting fake certificates.views.support module for CMS.  Not used in Studio")
-    sys.modules['lms.djangoapps.certificates.views.support'] = FakeModule()  # load an emtpty module
-
+if hasattr(settings, 'STUDIO_NAME'):  # cms
+    from .helpers import cms_import_helper
+    cms_import_helper()
 
 from lms.djangoapps.certificates.views import webview
 
