@@ -11,7 +11,7 @@ from xblock.fields import Scope, String, Float, XBlockMixin
 from xmodule import course_module, xml_module
 
 from . import settings
-
+from . import fields
 
 # Make '_' a no-op so we can scrape strings
 def _(text):
@@ -156,7 +156,7 @@ class XMLDefinitionChainingMixin(XBlockMixin):
 class CreditsMixin(XBlockMixin):
     """Mixin that allows an author to specify a credit provider and a number of credit units."""
 
-    credit_provider = String(
+    credit_provider = fields.DefaultEnforcedString(
         display_name=_("Credit Provider"),
         help=_("Name of the entity providing the credit units"),
         values=build_field_values(CREDIT_PROVIDERS),
@@ -187,11 +187,9 @@ class CreditsMixin(XBlockMixin):
 
     @classmethod
     def definition_from_xml(cls, definition, children):
-        print "in CreditsMixin definition_to_xml"
         return definition, children
 
     def definition_to_xml(self, xml_object):
-        print "in CreditsMixin definition_to_xml"
         for field in ('credit_provider', 'credits', 'credit_unit', 'accreditation_conferred'):
             if getattr(self, field, None):
                 xml_object.set(field, str(getattr(self, field)))
@@ -229,11 +227,9 @@ class InstructionTypeMixin(XBlockMixin):
 
     @classmethod
     def definition_from_xml(cls, definition, children):
-        print "in InstructionTypeMixin definition_to_xml"
         return definition, children
 
     def definition_to_xml(self, xml_object):
-        print "in InstructionTypeMixin definition_to_xml"
         for field in ('field_of_study', 'instructional_method', 'instruction_location'):
             if getattr(self, field, None):
                 xml_object.set(field, str(getattr(self, field)))
