@@ -34,6 +34,7 @@ from xmodule.contentstore.content import StaticContent
 from xmodule.modulestore.django import SignalHandler, modulestore
 
 from . import app_settings
+from . import helpers
 
 
 DEFAULT_CERT = """
@@ -47,30 +48,6 @@ logger = logging.getLogger(__name__)
 
 
 # TODO: refactor these handlers for DRY
-
-def disable_if_certs_feature_off(func):
-    @wraps(func)
-    def noop_handler(*args, **kwargs):
-        logger.warn('{} signal handler disabled since CERTIFICATES_ENABLED is False'.format(func.__name__))
-    if settings.FEATURES.get('CERTIFICATES_ENABLED', False):
-        return func
-    else:
-        noop_handler.__name__ = str('noop_handler_{}'.format(func.__name__))
-        return noop_handler
-
-
-def cms_only(func):
-    """ can only be run in CMS context
-    """
-    @wraps(func)
-    def noop_handler(*args, **kwargs):
-        logger.warn('{} signal handler disabled since not in CMS context'.format(func.__name__))
-
-    if os.environ.get('SERVICE_VARIANT', None) == 'cms':
-        return func
-    else:
-        noop_handler.__name__ = str('noop_handler_{}'.format(func.__name__))
-        return noop_handler
 
 
 def make_default_cert(course_key):
@@ -128,7 +105,7 @@ def store_theme_signature_img_as_asset(course_key, theme_asset_path):
 
 
 @receiver(SignalHandler.pre_publish)
-@disable_if_certs_feature_off
+@helpers.disable_if_certs_feature_off
 def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
     """
     Catches the signal that a course has been pre-published in Studio and
@@ -189,8 +166,8 @@ def toggle_self_generated_certs(course_key, course_self_paced):
 
 
 @receiver(SignalHandler.pre_publish)
-@disable_if_certs_feature_off
-@cms_only
+@helpers.disable_if_certs_feature_off
+@helpers.cms_only
 def _make_default_active_certificate(sender, course_key, replace=False, force=False, **kwargs):
     """
     Create an active default certificate on the course.  If we pass replace=True, it will

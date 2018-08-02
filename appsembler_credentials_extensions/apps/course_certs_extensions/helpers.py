@@ -11,6 +11,20 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
+def cms_only(func):
+    """ can only be run in CMS context
+    """
+    @wraps(func)
+    def noop_handler(*args, **kwargs):
+        logger.warn('{} signal handler disabled since not in CMS context'.format(func.__name__))
+
+    if hasattr(settings, 'STUDIO_NAME'):  # cms (this is more versatile for tests than looking at SERVICE_VARIANT)
+        return func
+    else:
+        noop_handler.__name__ = str('noop_handler_{}'.format(func.__name__))
+        return noop_handler
+
+
 def cms_import_helper():
     # if we are in CMS we need to mock out unimportable modules
     # load a fake certificates.views.support module for now

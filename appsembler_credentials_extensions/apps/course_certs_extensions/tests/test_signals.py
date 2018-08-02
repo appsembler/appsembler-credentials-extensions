@@ -55,16 +55,6 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
         if certificates feature is not enabled.
     """
 
-    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.signals.settings.FEATURES', {'CERTIFICATES_ENABLED': False})
-    def test_signal_handlers_disabler_decorator(self):
-        """ Verify decorator works to return a noop function if CERTIFICATES_ENABLED is False
-        """
-        mock_decorated = mock.Mock()
-        mock_decorated.__name__ = str('mocked')  # needed for functools.wrap
-        ret_func = signals.disable_if_certs_feature_off(mock_decorated)
-        self.assertNotEqual(ret_func, mock_decorated)
-        self.assertTrue('noop_handler' in ret_func.__name__)
-
     @certs_feature_enabled
     def test_cert_related_advanced_settings_as_expected_by_default(self):
         """ Verify that cert-related advanced course settings are what
