@@ -209,7 +209,7 @@ class InstructionTypeMixin(XBlockMixin):
                             )
 
     # we could create course_modes for this, but better to keep this separate.
-    instructional_method = String(
+    instructional_method = fields.DefaultEnforcedString(
         display_name=_("Instructional Method"),
         help=_("Type of instruction; e.g., classroom, self-paced"),
         default=COURSE_INSTRUCTIONAL_METHOD_DEFAULT,
@@ -217,7 +217,7 @@ class InstructionTypeMixin(XBlockMixin):
         scope=Scope.settings,
     )
 
-    instruction_location = String(
+    instruction_location = fields.DefaultEnforcedString(
         display_name=_("Instruction Location"),
         help=_("Physical location of insruction; for cases where Open edX courseware is used in a specific physical setting"),
         values=build_field_values(COURSE_INSTRUCTION_LOCATIONS),
