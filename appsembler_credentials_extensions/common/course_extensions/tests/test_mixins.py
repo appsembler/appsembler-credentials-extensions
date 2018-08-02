@@ -21,7 +21,9 @@ TEST_CREDIT_PROVIDERS = [
     'Credit Provider'
 ]
 
-TEST_CREDIT_PROVIDER_DEFAULT = 'foo'
+TEST_FIELDS_OF_STUDY = ["Français", "German"]
+TEST_INSTRUCTIONAL_METHOD = ["In person", "Vîrtual classroom"]
+TEST_INSTRUCTION_LOCATION = ["Université d'Appsembler", "Zagreb Campus"]
 
 
 class CourseMixinsTestCase(ModuleStoreTestCase):
@@ -68,5 +70,45 @@ class CourseMixinsTestCase(ModuleStoreTestCase):
         with self.assertRaises(ValueError):
             new_provider_field = fields.DefaultEnforcedString(
                 values=mixins.build_field_values(TEST_CREDIT_PROVIDERS),
-                default=TEST_CREDIT_PROVIDER_DEFAULT
+                default='not_in_values'
+            )
+
+    def test_instruction_type_mixin_fields(self):
+        """ Verify proper fields are added, field values are correct."""
+
+        mixins.InstructionTypeMixin.field_of_study._values = mixins.build_field_values(TEST_FIELDS_OF_STUDY)
+        mixins.InstructionTypeMixin.instructional_method._values = mixins.build_field_values(TEST_INSTRUCTIONAL_METHOD)
+        mixins.InstructionTypeMixin.instruction_location._values = mixins.build_field_values(TEST_INSTRUCTION_LOCATION)
+        course = CourseFactory.create()
+        course.__class__ = type(str('CourseDescriptorWithCredits'), (course_module.CourseDescriptor, mixins.InstructionTypeMixin), {})
+        field_keys = course.fields.keys()
+        self.assertIn('field_of_study', field_keys)
+        self.assertIn('instructional_method', field_keys)
+        self.assertIn('instruction_location', field_keys)
+
+        self.assertEqual([
+            {'value': 'Français', 'display_name': 'Français'},
+            {'value': 'German', 'display_name': 'German'},
+        ], course.__class__.fields['field_of_study'].values)
+        self.assertEqual([
+            {'value': 'In person', 'display_name': 'In person'},
+            {'value': 'Vîrtual classroom', 'display_name': 'Vîrtual classroom'},
+        ], course.__class__.fields['instructional_method'].values)
+        self.assertEqual([
+            {'value': 'Université d\'Appsembler', 'display_name': 'Université d\'Appsembler'},
+            {'value': 'Zagreb Campus', 'display_name': 'Zagreb Campus'},
+        ], course.__class__.fields['instruction_location'].values)
+
+        # can't set a default that's not in the INSTRUCTIONAL_METHOD values
+        with self.assertRaises(ValueError):
+            new_instructional_method_field = fields.DefaultEnforcedString(
+                values=mixins.build_field_values(TEST_INSTRUCTIONAL_METHOD),
+                default='not_in_values'
+            )
+
+        # can't set a default that's not in the INSTRUCTION_LOCATION values
+        with self.assertRaises(ValueError):
+            new_instruction_location_field = fields.DefaultEnforcedString(
+                values=mixins.build_field_values(TEST_INSTRUCTION_LOCATION),
+                default='not_in_values'
             )
