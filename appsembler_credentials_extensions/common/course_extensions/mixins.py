@@ -13,6 +13,7 @@ from xmodule import course_module, xml_module
 from . import settings
 from . import fields
 
+
 # Make '_' a no-op so we can scrape strings
 def _(text):
     return text
