@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Unit tests for signal handlers on course publication activity."""
 
 from __future__ import absolute_import, unicode_literals
@@ -124,27 +126,28 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
             self.assertTrue(certs_api.cert_generation_enabled(course.id))
 
 
+class FakeStaticStorage(object):
+    def path(self, asset_path):
+        return os.path.join(settings.COMMON_TEST_DATA_ROOT, asset_path)
+
+
 class CertsCreationSignalsTest(BaseCertSignalsTestCase):
     """ Tests for signal handlers which set up certificates.  None of the handlers should do anything
         if certificates feature is not enabled.
     """
 
+
+    def fake_get_storage_class(foo):
+        return FakeStaticStorage
+
+    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class)
     def test_store_theme_signature_img_as_asset(self):
         """ Verify that an file passed as a signature image is stored as a course content asset
         """
-        # this image exists on the filesystem from certificates app static files
         asset_file = "demo-sig1.png"
+        signals.store_theme_signature_img_as_asset(self.course.id, asset_file)
 
-        class FakeStaticStorage(object):
-            def path(self, asset_path):
-                return os.path.join(settings.COMMON_TEST_DATA_ROOT, asset_file)
-
-        def fake_get_storage_class(foo):
-            return FakeStaticStorage
-
-        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class):
-            signals.store_theme_signature_img_as_asset(self.course.id, asset_file)
-
+    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class)
     def test_make_default_cert_string(self):
         """ Verify helper function generates a string for default certificate creation
             that can be deserialized to a dictionary with proper values
@@ -178,23 +181,40 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
             # test an image can be stored
             self.mock_app_settings.DEFAULT_CERT_SIGNATORIES[0].update(
                 {
-                    "signature_image_path": "/fake/theme/dir/signature_image.jpg"
+                    "signature_image_path": "demo-sig1.png"
                 }
             )
-            # cert_string = signals.make_default_cert(self.course.id)
-            # cert_dict = json.loads(cert_string)
+            cert_string = signals.make_default_cert(self.course.id)
+            cert_dict = json.loads(cert_string)
 
-            # self.assertEqual(cert_dict["course_title"], "")
-            # self.assertEqual(cert_dict["name"], "Default")
-            # self.assertTrue(cert_dict["is_active"])
-            # self.assertEqual(cert_dict["version"], 1)
-            # self.assertFalse(cert_dict["editing"])
-            # self.assertEqual(cert_dict["description"], "Default certificate")
+            self.assertEqual(cert_dict["course_title"], "")
+            self.assertEqual(cert_dict["name"], "Default")
+            self.assertTrue(cert_dict["is_active"])
+            self.assertEqual(cert_dict["version"], 1)
+            self.assertFalse(cert_dict["editing"])
+            self.assertEqual(cert_dict["description"], "Default certificate")
 
-            # edge cases: non-ASCII, others...
-            # signatories = cert_dict["signatories"]
-            # self.assertTrue(len(signatories), 1)
-            # self.assertInstance(signatories[0], dict))
-            # self.assertEqual(signatories[0]['name'], 'Name One')
-            # self.assertEqual(signatories[0]['title'], 'Some Title, Other Title')
-            # self.assertEqual(signatories[0]['organization'], 'organization')
+            signatories = cert_dict["signatories"]
+            self.assertTrue(len(signatories), 1)
+            self.assertIsInstance(signatories[0], dict)
+            self.assertEqual(signatories[0]['name'], 'Name One')
+            self.assertEqual(signatories[0]['title'], 'Some Title, Other Title')
+            self.assertEqual(signatories[0]['organization'], 'organization')
+
+
+            self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = [
+                {
+                    "name": "Ñámè Öñê",
+                    "title": "Sømé Tîtlë",
+                    "organization": "órg®ñÏzåtïøn",
+                    "signature_image_path": "demo-sig1.png"
+                },
+            ]
+            cert_string = signals.make_default_cert(self.course.id)
+            cert_dict = json.loads(cert_string)
+            signatories = cert_dict["signatories"]
+            self.assertTrue(len(signatories), 1)
+            self.assertIsInstance(signatories[0], dict)
+            self.assertEqual(signatories[0]['name'], 'Ñámè Öñê')
+            self.assertEqual(signatories[0]['title'], 'Sømé Tîtlë')
+            self.assertEqual(signatories[0]['organization'], 'órg®ñÏzåtïøn')
