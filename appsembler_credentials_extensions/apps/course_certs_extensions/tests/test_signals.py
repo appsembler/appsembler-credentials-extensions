@@ -157,6 +157,7 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
         self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = {}
         self.mock_app_settings.ACTIVATE_DEFAULT_CERTS = True
         with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
+
             cert_string = signals.make_default_cert(self.course.id)
             cert_dict = json.loads(cert_string)
             self.assertEqual(cert_dict["course_title"], "")
@@ -184,6 +185,7 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
                     "signature_image_path": "demo-sig1.png"
                 }
             )
+
             cert_string = signals.make_default_cert(self.course.id)
             cert_dict = json.loads(cert_string)
 
@@ -201,7 +203,6 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
             self.assertEqual(signatories[0]['title'], 'Some Title, Other Title')
             self.assertEqual(signatories[0]['organization'], 'organization')
 
-
             self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = [
                 {
                     "name": "Ñámè Öñê",
@@ -213,8 +214,33 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
             cert_string = signals.make_default_cert(self.course.id)
             cert_dict = json.loads(cert_string)
             signatories = cert_dict["signatories"]
-            self.assertTrue(len(signatories), 1)
-            self.assertIsInstance(signatories[0], dict)
             self.assertEqual(signatories[0]['name'], 'Ñámè Öñê')
             self.assertEqual(signatories[0]['title'], 'Sømé Tîtlë')
             self.assertEqual(signatories[0]['organization'], 'órg®ñÏzåtïøn')
+
+    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class)
+    @certs_feature_enabled
+    def test_make_default_active_cert(self):
+        """Verify creation of a default active certificate matching the default cert string."""
+
+        # TODO: can't seem to get self.course.certificates to persist in the store in the tests
+        # ... so all this does really is make sure no errors are thrown
+
+        # self.assertEqual(len(self.course.certificates), 0)
+
+        self.mock_app_settings.ACTIVATE_DEFAULT_CERTS = True
+        self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = [
+            {
+                "name": "Ñámè Öñê",
+                "title": "Sømé Tîtlë",
+                "organization": "órg®ñÏzåtïøn",
+                "signature_image_path": "demo-sig1.png"
+            },
+        ]
+
+        signals._make_default_active_certificate('foo', self.course.id)
+        # self.assertEqual(len(self.course.certificates), 0)
+
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings.USE_OPEN_ENDED_CERTS_DEFAULTS', new=True):
+            signals._make_default_active_certificate('foo', self.course.id)
+            # self.assertEqual(len(self.course.certificates), 1)
