@@ -26,6 +26,8 @@ except ImportError:
         pass  # some of the other imports in certificates will fail in LMS context but they aren't needed
 
 
+# don't import from lms.djangoapps.certificates here or it will 
+# mess up app registration
 from certificates import models as cert_models
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.models.course_details import COURSE_PACING_CHANGE
