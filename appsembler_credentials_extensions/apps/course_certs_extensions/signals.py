@@ -28,7 +28,7 @@ except ImportError:
 
 # don't import from lms.djangoapps.certificates here or it will 
 # mess up app registration
-from certificates import models as cert_models
+from certificates.models import CertificateGenerationCourseSetting
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.models.course_details import COURSE_PACING_CHANGE
 from xmodule.contentstore.django import contentstore
@@ -164,7 +164,7 @@ def toggle_self_generated_certs(course_key, course_self_paced):
     course_key = CourseKey.from_string(course_key)
     enable = False if app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED is True else \
         (course_self_paced or app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS)
-    cert_models.CertificateGenerationCourseSetting.set_enabled_for_course(course_key, enable)
+    CertificateGenerationCourseSetting.set_enabled_for_course(course_key, enable)
 
 
 @receiver(SignalHandler.pre_publish)

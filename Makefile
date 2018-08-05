@@ -1,6 +1,7 @@
 .PHONY: clean compile_translations coverage docs dummy_translations \
 	extract_translations fake_translations help pull_translations push_translations \
-	quality requirements selfcheck test test-all upgrade validate
+	quality requirements selfcheck test test-all test_badges test_course_certs \
+	test_course_extensions upgrade validate
 
 .DEFAULT_GOAL := help
 
@@ -20,10 +21,12 @@ OS_NAME := $(shell uname -s)
 ifeq ($(OS_NAME),Linux)
 	TEST_PRE = @sudo service mongodb start
 	TEST_POST = @sudo service mongodb stop
+	SHELL := /opt/local/bin/bash
 endif
 ifeq ($(OS_NAME),Darwin)
 	TEST_PRE = @brew services start mongodb
 	TEST_POST = @brew services stop mongodb
+	SHELL := /bin/bash
 endif
 
 
@@ -78,15 +81,16 @@ ifeq ($(OS_NAME),Darwin)
 endif
 
 requirements: system-deps ## install development environment requirements
-	pip install -qr requirements/dev.txt --exists-action w
-	pip install -r requirements/dev.txt -r requirements/OpenedX_${EDX_PLATFORM_VERSION}.txt
-	# pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/pre.txt  # pyparsing uninstall/reinstall errors
-	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/base.txt
-	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/github.txt
-	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/paver.txt
-	cd ${VIRTUAL_ENV}/src/open-edx && pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/local.txt
-	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/appsembler.txt
-	pip install -r ${VIRTUAL_ENV}/src/open-edx/requirements/edx/post.txt
+	pip install -r requirements/dev.txt
+	pip install -r requirements/OpenedX_${EDX_PLATFORM_VERSION}.txt	
+ifeq ($(EDX_PLATFORM_VERSION),Ginkgo)
+	# TODO: don't install edx-private, maybe not the testing or coverage ones either
+	cd ${VIRTUAL_ENV} && find "${VIRTUAL_ENV}/src/open-edx/requirements/edx/" -name "*.txt" -type f -exec pip install -r {} \;
+endif
+ifeq ($(EDX_PLATFORM_VERSION), Hawthorn)
+	cd ${VIRTUAL_ENV}/src/open-edx && pip install -r requirements/edx/testing.txt
+	cd ${VIRTUAL_ENV}/src/open-edx && test -f requirements/edx/appsembler.txt && pip install -r requirements/edx/appsembler.txt
+endif
 
 test: clean ## run tests in the current virtualenv
 	$(TEST_PRE)

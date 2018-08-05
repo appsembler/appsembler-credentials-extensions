@@ -7,10 +7,18 @@ Django applications, so these settings will not be used.
 
 from __future__ import absolute_import, unicode_literals
 
+from os import environ
 from os.path import abspath, dirname, join
 
 from cms.envs.common import *
 
+# Hawthorn introduces derived settings
+try:
+    from openedx.core.lib.derived import derive_settings
+    derive_settings(__name__)
+    DEFAULT_TEMPLATE_ENGINE = TEMPLATES[0]
+except ImportError:
+    pass
 
 def root(*args):
     """Get the absolute path of the given path relative to the project root."""
@@ -22,7 +30,7 @@ COMMON_TEST_DATA_ROOT = PROJECT_ROOT / "tests" / "data"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'default.db',
+        'NAME': 'default.{}.db'.format(os.environ.get('EDX_PLATFORM_VERSION', '')),
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -49,16 +57,21 @@ CONTENTSTORE = {
     }
 }
 
-INSTALLED_APPS = INSTALLED_APPS + (
-    'badges',  # needed for some test setup
+test_apps = (
     'certificates',  # needed for some test setup
-    'appsembler_credentials_extensions.apps.course_certs_extensions',
-    'appsembler_credentials_extensions.apps.badges_extensions',
+    'badges',  # needed for some test setup
+    'appsembler_credentials_extensions.apps.course_certs_extensions.apps.AppsemblerCredentialsCourseCertsConfig',
+    'appsembler_credentials_extensions.apps.badges_extensions.apps.AppsemblerCredentialsBadgesConfig',
 )
 
-# LOCALE_PATHS = [
-#     root('appsembler_credentials_extensions', 'conf', 'locale'),
-# ]
+try:
+    INSTALLED_APPS = INSTALLED_APPS + test_apps
+except TypeError:
+    INSTALLED_APPS = INSTALLED_APPS + list(test_apps)  # Hawthorn+
+
+LOCALE_PATHS = [
+    root('appsembler_credentials_extensions', 'conf', 'locale'),
+]
 
 # ROOT_URLCONF = 'appsembler_credentials_extensions.urls'
 
