@@ -4,7 +4,10 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import os
+
 from django.apps import AppConfig
+from django.conf import settings
 
 
 class AppsemblerCredentialsCourseCertsConfig(AppConfig):
@@ -18,3 +21,10 @@ class AppsemblerCredentialsCourseCertsConfig(AppConfig):
         """Do stuff after app is ready."""
         from . import monkeypatch  # no-qa
         from . import signals  # no-qa
+
+        # disable migrations outside of LMS environment
+        if os.environ.get('SERVICE_VARIANT', '').lower() != 'lms':
+            # starting Django 1.9 can just set this to `None`
+            settings.MIGRATION_MODULES.update({
+                'appsembler_course_certs_extensions': "nomigrations"
+            })
