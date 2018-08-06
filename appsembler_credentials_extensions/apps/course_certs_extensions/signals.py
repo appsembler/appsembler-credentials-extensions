@@ -65,6 +65,8 @@ def make_default_cert(course_key):
         for i, sig in enumerate(signatories):
             default_cert_signatory = copy.deepcopy(sig)
             default_cert_signatory['id'] = i
+            if default_cert_signatory.get('organization') is None:
+                default_cert_signatory.update({'organization': ''})
             try:
                 theme_asset_path = sig['signature_image_path']
                 sig_img_path = store_theme_signature_img_as_asset(course_key, theme_asset_path)
@@ -115,7 +117,6 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
     """
     # has to be done this way since it's not possible to monkeypatch the default attrs on the
     # CourseFields fields
-
     if not app_settings.USE_OPEN_ENDED_CERTS_DEFAULTS:
         return
 
