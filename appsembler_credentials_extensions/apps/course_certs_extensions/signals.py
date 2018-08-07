@@ -28,6 +28,7 @@ except ImportError:
 
 # don't import from lms.djangoapps.certificates here or it will 
 # mess up app registration
+from certificates import api as certs_api
 from certificates.models import CertificateGenerationCourseSetting
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.models.course_details import COURSE_PACING_CHANGE
@@ -122,15 +123,12 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
 
     store = modulestore()
     course = store.get_course(course_key)
-    # TODO replace this logic w/o using the custom mixin fields
-    # if course.cert_defaults_set:
-    #     return
+    # TODO try not to keep handling this signal beyond one time, and without
+    # having to add a field to CourseDescriptor
 
     course.certificates_display_behavior = 'early_with_info'
     course.certificates_show_before_end = True  # deprecated anyhow
     course.cert_html_view_enabled = True
-    # TODO replace this logic w/o using the custom mixin fields
-    # course.cert_defaults_set = True
     course.save()
     try:
         store.update_item(course, course._edited_by)
@@ -185,9 +183,10 @@ def _make_default_active_certificate(sender, course_key, replace=False, force=Fa
 
     store = modulestore()
     course = store.get_course(course_key)
-    # TODO replace this logic w/o using the custom mixin fields
-    # if course.active_default_cert_created and not replace:
-    #     return
+
+    # only create a new one if there are no existing, even deactivated certificates
+    if len(course.certificates.get('certificates')) and not replace:
+        return
 
     default_cert_data = make_default_cert(course_key)
     new_cert = store_certificates.CertificateManager.deserialize_certificate(course, default_cert_data)
