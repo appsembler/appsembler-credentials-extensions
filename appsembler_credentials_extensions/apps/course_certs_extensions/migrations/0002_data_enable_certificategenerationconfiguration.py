@@ -18,7 +18,8 @@ def enable_course_certificates(apps, schema_editor):
     """
     (CertificateGenerationConfiguration, ) = get_models(apps)
 
-    CertificateGenerationConfiguration.objects.get_or_create(enabled=True)
+    new_conf = CertificateGenerationConfiguration(enabled=True)
+    new_conf.save()
 
 
 class Migration(migrations.Migration):
