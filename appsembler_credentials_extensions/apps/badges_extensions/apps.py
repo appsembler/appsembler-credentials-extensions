@@ -17,4 +17,3 @@ class AppsemblerCredentialsBadgesConfig(AppConfig):
     def ready(self):
         """Do stuff after app is ready."""
         from . import signals
-        signals  # pyflakes
