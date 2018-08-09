@@ -184,12 +184,12 @@ def _make_default_active_certificate(sender, course_key, replace=False, force=Fa
     course = store.get_course(course_key)
 
     # only create a new one if there are no existing, even deactivated certificates
-    if len(course.certificates.get('certificates')) and not replace:
+    if len(course.certificates.get('certificates', {})) and not replace:
         return
 
     default_cert_data = make_default_cert(course_key)
     new_cert = store_certificates.CertificateManager.deserialize_certificate(course, default_cert_data)
-    if not course.certificates.has_key('certificates'):
+    if not 'certificates' in course.certificates.keys():
         course.certificates['certificates'] = []
     if replace:
         course.certificates['certificates'] = [new_cert.certificate_data, ]
