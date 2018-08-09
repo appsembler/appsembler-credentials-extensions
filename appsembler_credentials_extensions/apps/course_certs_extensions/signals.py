@@ -116,9 +116,13 @@ def _default_mode_on_course_pre_publish(sender, course_key, **kwargs):  # pylint
     Create a CourseMode in the default mode.  Otherwise a CourseMode has to be added
     manually in Django admin to be able to create course certificates
     """
-    slug = CourseMode.DEFAULT_MODE_SLUG
-    display_name = CourseMode.DEFAULT_MODE['name']
-    CourseMode.objects.get_or_create(course_id=course_key, mode_slug=slug, mode_display_name=display_name)
+    CourseMode.objects.get_or_create(
+        course_id=course_key,
+        mode_slug=CourseMode.DEFAULT_MODE_SLUG,
+        mode_display_name=CourseMode.DEFAULT_MODE['name'],
+        min_price=CourseMode.DEFAULT_MODE['min_price'],
+        currency=CourseMode.DEFAULT_MODE['currency']
+    )
 
 
 @receiver(SignalHandler.pre_publish)
