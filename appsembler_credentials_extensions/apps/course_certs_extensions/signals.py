@@ -110,6 +110,19 @@ def store_theme_signature_img_as_asset(course_key, theme_asset_path):
 
 @receiver(SignalHandler.pre_publish)
 @helpers.disable_if_certs_feature_off
+def _default_mode_on_course_pre_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
+    """
+    Catch the signal that course content has pre-published in Studio.
+    Create a CourseMode in the default mode.  Otherwise a CourseMode has to be added
+    manually in Django admin to be able to create course certificates
+    """
+    slug = CourseMode.DEFAULT_MODE_SLUG
+    display_name = CourseMode.DEFAULT_MODE['name']
+    CourseMode.objects.get_or_create(course_id=course_key, mode_slug=slug, mode_display_name=display_name)
+
+
+@receiver(SignalHandler.pre_publish)
+@helpers.disable_if_certs_feature_off
 def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
     """
     Catches the signal that a course has been pre-published in Studio and

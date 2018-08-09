@@ -13,6 +13,7 @@ from django.conf import settings
 
 from certificates.models import CertificateGenerationConfiguration
 from certificates import api as certs_api
+from course_modes.models import CourseMode
 from openedx.core.djangoapps.self_paced.models import SelfPacedConfiguration
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.tests.factories import CourseFactory
@@ -23,7 +24,7 @@ from appsembler_credentials_extensions.apps.course_certs_extensions import signa
 
 def certs_feature_enabled(func):
     @wraps(func)
-    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.signals.settings.FEATURES', {'CERTIFICATES_ENABLED': True})
+    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.signals.settings.FEATURES', {'CERTIFICATES_HTML_VIEW': True})
     def with_certs_enabled(*args, **kwargs):
         # reload to re-evaluate the decorated methods with new setting
         reload(signals)
@@ -124,6 +125,20 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
             course = CourseFactory.create(self_paced=False)
             signals.toggle_self_generated_certs(course.id, course.self_paced)
             self.assertTrue(certs_api.cert_generation_enabled(course.id))
+
+    @certs_feature_enabled
+    def test_default_mode_on_course_pre_publish(self):
+        """Verify a CourseMode is created in default mode on course pre-publish.
+        """
+        DEFAULT_MODE = dict(name='Honor')
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.DEFAULT_MODE', new=DEFAULT_MODE):
+            with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.DEFAULT_MODE_SLUG', new='honor'):
+                with self.assertRaises(CourseMode.DoesNotExist):
+                    mode = CourseMode.objects.get(course_id=self.course.id, mode_slug='honor', mode_display_name='Honor')
+                signals._default_mode_on_course_pre_publish(self.store, self.course.id)
+                mode = CourseMode.objects.get(course_id=self.course.id, mode_slug='honor', mode_display_name='Honor')
+                self.assertEqual(mode.mode_slug, 'honor')
+                self.assertTrue(mode.mode_display_name, 'Honor')
 
 
 class FakeStaticStorage(object):
