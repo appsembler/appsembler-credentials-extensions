@@ -119,9 +119,9 @@ def _default_mode_on_course_pre_publish(sender, course_key, **kwargs):  # pylint
     CourseMode.objects.get_or_create(
         course_id=course_key,
         mode_slug=CourseMode.DEFAULT_MODE_SLUG,
-        mode_display_name=CourseMode.DEFAULT_MODE['name'],
-        min_price=CourseMode.DEFAULT_MODE['min_price'],
-        currency=CourseMode.DEFAULT_MODE['currency']
+        mode_display_name=CourseMode.DEFAULT_MODE.name,
+        min_price=CourseMode.DEFAULT_MODE.min_price,
+        currency=CourseMode.DEFAULT_MODE.currency
     )
 
 
