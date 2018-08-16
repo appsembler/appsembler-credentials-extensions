@@ -13,6 +13,14 @@ from appsembler_credentials_extensions.apps.badges_extensions import app_setting
 
 @receiver(SignalHandler.pre_publish)
 def _change_badges_setting_on_pre_publish(sender, course_key, **kwargs):  # pylint: disable=unused-argument
+    """Turn off issue_badges on a course.
+
+    We do this if feature not enabled, or we explicitly disable course
+    completion badges. At present, course completion badges don't work properly
+    with Badgr so we use course group badging and have to turn off
+    `issue_badges`.
+    """
+
     store = modulestore()
     course = store.get_course(course_key)
     use_badges = settings.FEATURES.get('ENABLE_OPENBADGES', False)
