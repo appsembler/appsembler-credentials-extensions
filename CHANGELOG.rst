@@ -11,15 +11,15 @@ Change Log
 
 .. There should always be an "Unreleased" section for changes pending release.
 
+
 Unreleased
 ~~~~~~~~~~
 
 *
 
-[0.1.0] - 2018-07-03
+[0.1.0] - 2018-08-16
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Added
-_____
-
-* First release on PyPI.
+Initial version ported from `appsembleredx <https://github.com/appsembler/appsembleredx/>`_.
+Ready for inclusion in Ginkgo edx-platform.
+ 
