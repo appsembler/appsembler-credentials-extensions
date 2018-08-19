@@ -83,30 +83,31 @@ How to Develop
 --------------
 Install this in a working Open edX instance/devstack:
  
-``bash
-$ cd /edx/app/edxapp
-$ source edxapp_env
-$ pip install -e git+https://github.com/appsembler/appsembler_credentials_extensions.git
-``
+.. code-block:: bash
+
+   $ cd /edx/app/edxapp
+   $ source edxapp_env
+   $ pip install -e git+https://github.com/appsembler/appsembler_credentials_extensions.git
 
 then add to INSTALLED_APPS:
 
-``python
-[ 
-"appsembler_credentials_extensions.apps.course_certs_extensions",
-"appsembler_credentials_extensions.apps.badges_extensions",
-]
-``
+.. code-block:: python
+
+   [ 
+   "appsembler_credentials_extensions.apps.course_certs_extensions",
+   "appsembler_credentials_extensions.apps.badges_extensions",
+   ]
+
 
 
 Run the migrations:
 
-``bash
-$ cd /appsembler/app/edxapp
-$ source edxapp_env
-$ cd edx-platform
-$ ./manage.py lms migrate appsembler_course_certs_extensions
-``
+.. code-block:: bash
+
+   $ cd /appsembler/app/edxapp
+   $ source edxapp_env
+   $ cd edx-platform
+   $ ./manage.py lms migrate appsembler_course_certs_extensions
 
 then run the LMS or CMS service, like  ``$ ./manage.py lms runserver --settings=devstack_appsembler 8000``
 
@@ -118,20 +119,20 @@ release of edx-platform in a `virtualenv`.  Note that it doesn't currently run a
 assest compilation via paver, but just makes edx-platform modules available to the Python
 shell that runs the tests. 
 
-```bash
-$ mkvirtualenv appsembler_credentials
-$ workon appsembler_credentials
-$ export EDX_PLATFORM_VERSION={one of Ginkgo|Hawthorn}
-$ make upgrade
-$ make requirements
-$ make test
-```
+.. code-block:: bash
+
+   $ mkvirtualenv appsembler_credentials
+   $ workon appsembler_credentials
+   $ export EDX_PLATFORM_VERSION={one of Ginkgo|Hawthorn}
+   $ make upgrade
+   $ make requirements
+   $ make test
 
 You can also just run tests for parts of the package, like:
 
-* $ make test_course_certs
-* $ make test_badges
-* $ make test_course_extensions
+* ``$ make test_course_certs``
+* ``$ make test_badges``
+* ``$ make test_course_extensions``
 
 
 Documentation

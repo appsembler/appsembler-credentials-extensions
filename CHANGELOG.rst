@@ -15,7 +15,8 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
-* Update README.rst 2018-08-18
+* Fix README code blocks
+* Update README.rst
 
 
 [0.1.0] - 2018-08-16
