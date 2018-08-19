@@ -4,12 +4,10 @@ language: python
 
 python:
   - 2.7
-  - 3.6
+  # - 3.6
 
 env:
-  - TOXENV=py27-edx_platform_ficus
   - TOXENV=py27-edx_platform_ginkgo
-  - TOXENV=py27-edx_platform_hawthorne
 
 # matrix:
 #   include:
