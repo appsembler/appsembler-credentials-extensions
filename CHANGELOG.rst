@@ -15,6 +15,7 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+* Fix a test in test_signals for course_certs_extensions
 * Fix README code blocks
 * Update README.rst
 

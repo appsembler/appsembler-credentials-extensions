@@ -130,7 +130,11 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
     def test_default_mode_on_course_pre_publish(self):
         """Verify a CourseMode is created in default mode on course pre-publish.
         """
-        DEFAULT_MODE = dict(name='Honor', min_price=0, currency='usd')
+        DEFAULT_MODE = mock.Mock()
+        DEFAULT_MODE.name = 'Honor'
+        DEFAULT_MODE.min_price = 0
+        DEFAULT_MODE.currency = 'usd'
+
         with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.DEFAULT_MODE', new=DEFAULT_MODE):
             with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.DEFAULT_MODE_SLUG', new='honor'):
                 with self.assertRaises(CourseMode.DoesNotExist):
