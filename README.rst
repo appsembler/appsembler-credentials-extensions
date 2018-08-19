@@ -1,8 +1,7 @@
-|pypi-badge| |travis-badge| |codecov-badge| |doc-badge| |pyversions-badge|
-|license-badge|
+|travis-badge| |codecov-badge| |license-badge|
 
 Common package with apps for extensions for Open edX course/program certificates, badges, and other credentials types TBD.
-It is a successor package to the poorly named ``appsembleredx`` which handle the same functions but is deprecated for the Ginkgo Open edX release.
+It is a successor package to the poorly named `appsembleredx <https://github.com/appsembler/appsembleredx>`_ which handles the same functions but is deprecated for the Ginkgo Open edX release.
 
 Overview
 --------
@@ -166,26 +165,13 @@ Reporting Security Issues
 Please do not report security issues in public. Please email technical@appsembler.com.
 
 
-
-.. |pypi-badge| image:: https://img.shields.io/pypi/v/appsembler-credentials-extensions.svg
-    :target: https://pypi.python.org/pypi/appsembler-credentials-extensions/
-    :alt: PyPI
-
 .. |travis-badge| image:: https://travis-ci.org/appsembler/appsembler-credentials-extensions.svg?branch=master
     :target: https://travis-ci.org/appsembler/appsembler-credentials-extensions
     :alt: Travis
 
-.. |codecov-badge| image:: http://codecov.io/github/appsembler/appsembler-credentials-extensions/coverage.svg?branch=master
-    :target: http://codecov.io/github/appsembler/appsembler-credentials-extensions?branch=master
+.. |codecov-badge| image::  https://codecov.io/gh/appsembler/appsembler-credentials-extensions/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/appsembler/appsembler-credentials-extensions
     :alt: Codecov
-
-.. |doc-badge| image:: https://readthedocs.org/projects/appsembler-credentials-extensions/badge/?version=latest
-    :target: http://appsembler-credentials-extensions.readthedocs.io/en/latest/
-    :alt: Documentation
-
-.. |pyversions-badge| image:: https://img.shields.io/pypi/pyversions/appsembler-credentials-extensions.svg
-    :target: https://pypi.python.org/pypi/appsembler-credentials-extensions/
-    :alt: Supported Python versions
 
 .. |license-badge| image:: https://img.shields.io/github/license/appsembler/appsembler-credentials-extensions.svg
     :target: https://github.com/appsembler/appsembler-credentials-extensions/blob/master/LICENSE.txt

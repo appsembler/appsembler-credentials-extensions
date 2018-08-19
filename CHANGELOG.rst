@@ -15,6 +15,9 @@ Change Log
 Unreleased
 ~~~~~~~~~~
 
+
+* Update README.rst - fix codecov, remove unused badges (pypi etc.)
+* tox.ini comment unused Py ver., make coverage add codecov package, make test comment Hawthorn
 * Fix a test in test_signals for course_certs_extensions
 * Fix README code blocks
 * Update README.rst
