@@ -30,6 +30,7 @@ except ImportError:
 from certificates.models import CertificateGenerationCourseSetting
 from course_modes.models import CourseMode
 from opaque_keys.edx.keys import CourseKey
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.core.djangoapps.models.course_details import COURSE_PACING_CHANGE
 from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.content import StaticContent
@@ -150,6 +151,16 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
         store.update_item(course, course._edited_by)
     except AttributeError:
         store.update_item(course, 0)
+
+
+@receiver(SignalHandler.course_published)
+@helpers.disable_if_certs_feature_off
+def enable_self_generated_certs(sender, course_key, **kwargs):  # pylint: disable=unused-argument
+    """
+    Enable/disable the self-generated certificates according to course-pacing.
+    """
+    course = CourseOverview.get_from_id(course_key)
+    toggle_self_generated_certs.delay(unicode(course_key), course.self_paced)
 
 
 # TODO: this isn't a monkeypatch but an additional signal handler
