@@ -13,9 +13,14 @@ Change Log
 
 
 Unreleased
-~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+
+[0.1.1] - 2019-02-09
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Include missing course_published signal handler to enable/disable self-generated certificates
 * Update README.rst - fix codecov, remove unused badges (pypi etc.)
 * tox.ini comment unused Py ver., make coverage add codecov package, make test comment Hawthorn
 * Fix a test in test_signals for course_certs_extensions
