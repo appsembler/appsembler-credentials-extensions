@@ -18,13 +18,15 @@ def enable_course_certificates(apps, schema_editor):
     """
     (CertificateGenerationConfiguration, ) = get_models(apps)
 
-    cgc = CertificateGenerationConfiguration.objects.get_or_create(enabled=True)
+    new_conf = CertificateGenerationConfiguration(enabled=True)
+    new_conf.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course_certs_extensions', '0001_data_set_default_course_mode'),
+        ('certificates', '0001_initial'),
+        ('appsembler_course_certs_extensions', '0001_data_set_default_course_mode'),
     ]
 
     operations = [

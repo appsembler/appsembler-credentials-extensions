@@ -1,0 +1,1 @@
+-e git+https://github.com/appsembler/edx-platform.git@appsembler/ginkgo/master#egg=Open_edX

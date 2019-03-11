@@ -28,7 +28,7 @@ def configure_course_certificate_html_view(apps, schema_editor):
     config = app_settings.CERTS_HTML_VIEW_CONFIGURATION
     if not config:
         logger.info("No CertificateHTMLViewConfiguration to configure.  \
-                     Set APPSEMBLER_CERTS_HTML_VIEW_CONFIGURATION in your lms/cms.env.json"
+                     Set CERTS_HTML_VIEW_CONFIGURATION in your lms/cms.env.json"
                     )
         return
 
@@ -41,13 +41,14 @@ def configure_course_certificate_html_view(apps, schema_editor):
         logger.info('Disabled old HTML View Configurations for certs')
     except CertificateHtmlViewConfiguration.DoesNotExist:
         pass
-    CertificateHtmlViewConfiguration.get_or_create(configuration=json.dumps(config), enabled=True)
+    newconf = CertificateHtmlViewConfiguration(configuration=json.dumps(config), enabled=True)
+    newconf.save()
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('course_certs_extensions', '0002_data_enable_certificategenerationconfiguration'),
+        ('appsembler_course_certs_extensions', '0002_data_enable_certificategenerationconfiguration'),
     ]
 
     operations = [

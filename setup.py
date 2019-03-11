@@ -37,11 +37,11 @@ CHANGELOG = open(os.path.join(os.path.dirname(__file__), 'CHANGELOG.rst')).read(
 setup(
     name='appsembler-credentials-extensions',
     version=VERSION,
-    description="""Common package with apps for extensions for Open edX course/program certificates, badges, and other credentials types TBD.""",
+    description="""Common package with lightweight course mixins for credits, and apps for extensions for Open edX course/program certificates, badges, and other credentials types TBD.""",
     long_description=README + '\n\n' + CHANGELOG,
     author='edX',
     author_email='oscm@edx.org',
-    url='https://github.com/edx/appsembler-credentials-extensions',
+    url='https://github.com/appsembler/appsembler-credentials-extensions',
     packages=[
         'appsembler_credentials_extensions',
     ],
