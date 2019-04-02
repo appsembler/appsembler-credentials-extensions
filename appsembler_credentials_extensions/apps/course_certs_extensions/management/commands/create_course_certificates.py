@@ -79,6 +79,7 @@ class Command(BaseCommand):
         """
         all_option = options.get('all', False)
         replace_option = options.get('replace', False)
+        no_input = options.get('no_input', False)
         replace_certs = False
 
         if len(args) == 0 and not all_option:
