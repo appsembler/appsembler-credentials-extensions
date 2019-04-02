@@ -50,6 +50,11 @@ class Command(BaseCommand):
                                  dest='replace',
                                  default=False,
                                  help='Replace existing certificates')
+    no_input = make_option('--noinput',
+                            action='store_true',
+                            dest='no_input',
+                            default=False,
+                            help='Don\'t require manual confirmation')
 
     option_list = BaseCommand.option_list + (all_option, replace_option)
 
@@ -83,7 +88,7 @@ class Command(BaseCommand):
 
         if all_option:
             # if reindexing is done during devstack setup step, don't prompt the user
-            if query_yes_no(self.CONFIRMATION_PROMPT, default="no"):
+            if no_input or query_yes_no(self.CONFIRMATION_PROMPT, default="no"):
                 # in case of --all, get the list of course keys from all courses
                 # that are stored in the modulestore
                 course_keys = []
@@ -101,7 +106,7 @@ class Command(BaseCommand):
             course_keys = map(self._parse_course_key, args)
 
         if replace_option:
-            if query_yes_no(self.REPLACE_CONFIRMATION_PROMPT, default="no"):
+            if no_input or query_yes_no(self.REPLACE_CONFIRMATION_PROMPT, default="no"):
                 replace_certs = True
                 # set active_default_cert_created to False for courses
                 for key in course_keys:
