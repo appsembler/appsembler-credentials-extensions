@@ -50,13 +50,13 @@ class Command(BaseCommand):
                                  dest='replace',
                                  default=False,
                                  help='Replace existing certificates')
-    no_input = make_option('--noinput',
+    no_input_option = make_option('--noinput',
                             action='store_true',
                             dest='no_input',
                             default=False,
                             help='Don\'t require manual confirmation')
 
-    option_list = BaseCommand.option_list + (all_option, replace_option)
+    option_list = BaseCommand.option_list + (all_option, replace_option, no_input_option)
 
     CONFIRMATION_PROMPT = u"Setting up all courses might be a time consuming operation. Do you want to continue?"
     REPLACE_CONFIRMATION_PROMPT = u"Are you sure you want to replace all existing certificates?  This should only be used to fix a problem."

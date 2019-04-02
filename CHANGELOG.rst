@@ -15,7 +15,7 @@ Change Log
 Unreleased
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
+* Add a --noinput option to create_course_certs management command.
 
 [0.1.1] - 2019-02-09
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
