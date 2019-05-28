@@ -188,8 +188,17 @@ def toggle_self_generated_certs(course_key, course_self_paced):
     """
     course_key = unicode(course_key)
     course_key = CourseKey.from_string(course_key)
+    if CertificateGenerationCourseSetting.is_enabled_for_course(course_key) and course_self_paced is True:
+        # Catch possible edge case which may happen during upgrades:
+        # Never change an enabled active config for a self-paced course to disabled
+        logger.warn("""
+            toggle_self_generated_certs won't override an enabled CertificateGenerationCourseSetting
+            with a disabled one on a course being changed (or probably re-saved) as self-paced.
+            """)
+        return
     enable = False if app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED is True else \
         (course_self_paced or app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS)
+
     CertificateGenerationCourseSetting.set_enabled_for_course(course_key, enable)
 
 

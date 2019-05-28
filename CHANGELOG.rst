@@ -15,6 +15,11 @@ Change Log
 Unreleased
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+[0.1.3] - 2019-05-27
+
+* Update author
+* Never change `CertifiateGenerationCourseSetting` from enabled to disabled if the course is self-paced.
+
 [0.1.2] - 2019-04-02
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
