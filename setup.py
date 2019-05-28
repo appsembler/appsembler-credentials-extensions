@@ -39,8 +39,8 @@ setup(
     version=VERSION,
     description="""Common package with lightweight course mixins for credits, and apps for extensions for Open edX course/program certificates, badges, and other credentials types TBD.""",
     long_description=README + '\n\n' + CHANGELOG,
-    author='edX',
-    author_email='oscm@edx.org',
+    author='Bryan Wilson (Appsembler)',
+    author_email='bryan@appsembler.com',
     url='https://github.com/appsembler/appsembler-credentials-extensions',
     packages=[
         'appsembler_credentials_extensions',
