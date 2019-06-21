@@ -7,7 +7,7 @@ python:
   # - 3.6
 
 env:
-  - TOXENV=quality
+  - TOXENV=flake8
 
 # matrix:
 #   include:
