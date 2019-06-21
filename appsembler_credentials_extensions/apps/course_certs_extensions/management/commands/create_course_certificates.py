@@ -30,7 +30,7 @@ class Command(BaseCommand):
     """Command to run all appsembler_course_extensions per-course setup.
 
     Examples:
-        ./manage.py create_course_certificates <course_id_1> <course_id_2> - creates certs in courses with keys course_id_1 and course_id_2
+        ./manage.py create_course_certificates <course_id_1> <course_id_2> - creates certs in courses with keys course_id_1 and course_id_2  # noqa
         ./manage.py create_course_certificates --all - creates certs in all available courses
         ./manage.py create_course_certificates --all --replace - creates or replaces certs in all available courses
     """
@@ -51,15 +51,16 @@ class Command(BaseCommand):
                                  default=False,
                                  help='Replace existing certificates')
     no_input_option = make_option('--noinput',
-                            action='store_true',
-                            dest='no_input',
-                            default=False,
-                            help='Don\'t require manual confirmation')
+                                  action='store_true',
+                                  dest='no_input',
+                                  default=False,
+                                  help='Don\'t require manual confirmation')
 
     option_list = BaseCommand.option_list + (all_option, replace_option, no_input_option)
 
     CONFIRMATION_PROMPT = u"Setting up all courses might be a time consuming operation. Do you want to continue?"
-    REPLACE_CONFIRMATION_PROMPT = u"Are you sure you want to replace all existing certificates?  This should only be used to fix a problem."
+    REPLACE_CONFIRMATION_PROMPT = (u"Are you sure you want to replace all existing certificates?  "
+                                   "This should only be used to fix a problem.")
 
     def _parse_course_key(self, raw_value):
         """Parses course key from string."""

@@ -13,7 +13,8 @@ from .. import helpers
 class CertsHelpersTestCase(TestCase):
     """ Tests for monkeypatches in course_certs_extensions app."""
 
-    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.helpers.settings', new=object())
+    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.helpers.settings',
+                new=object())
     def test_disable_when_certs_feature_off(self):
         """ Test disabling a function when the Open edX certificates feature is turned off."""
 
@@ -23,7 +24,8 @@ class CertsHelpersTestCase(TestCase):
         self.assertNotEqual(ret_func, mock_decorated)
         self.assertTrue('noop_handler' in ret_func.__name__)
 
-    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.helpers.settings.FEATURES', {'CERTIFICATES_ENABLED': False})
+    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.helpers.settings.FEATURES',
+                     {'CERTIFICATES_ENABLED': False})
     def test_signal_handlers_disabler_decorator(self):
         """ Verify decorator works to return a noop function if CERTIFICATES_ENABLED is False
         """

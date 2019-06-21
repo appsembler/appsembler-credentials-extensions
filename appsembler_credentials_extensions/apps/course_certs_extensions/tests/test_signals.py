@@ -24,7 +24,8 @@ from appsembler_credentials_extensions.apps.course_certs_extensions import signa
 
 def certs_feature_enabled(func):
     @wraps(func)
-    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.signals.settings.FEATURES', {'CERTIFICATES_HTML_VIEW': True})
+    @mock.patch.dict('appsembler_credentials_extensions.apps.course_certs_extensions.signals.settings.FEATURES',
+                     {'CERTIFICATES_HTML_VIEW': True})
     def with_certs_enabled(*args, **kwargs):
         # reload to re-evaluate the decorated methods with new setting
         reload(signals)
@@ -54,7 +55,7 @@ class LMSCertSignalsTestCase(BaseCertSignalsTestCase):
 
 class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
     """ Tests for signal handlers changing cert-related settings on course
-        publish or pre-publish.  Some of the handlers should not do anything 
+        publish or pre-publish.  Some of the handlers should not do anything
         if certificates feature is not enabled.
     """
 
@@ -79,7 +80,8 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
         self.assertFalse(course.cert_html_view_enabled)
 
         self.mock_app_settings.USE_OPEN_ENDED_CERTS_DEFAULTS = True
-        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings',
+                        new=self.mock_app_settings):
             signals._change_cert_defaults_on_pre_publish('store', self.course.id)
             course = self.store.get_course(self.course.id)
             self.assertEqual(course.certificates_display_behavior, 'early_with_info')
@@ -101,7 +103,8 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
             if it is explicitly disabled by setting
         """
         self.mock_app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED = True
-        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings',
+                        new=self.mock_app_settings):
             signals.toggle_self_generated_certs(self.course.id, self.course.self_paced)
             self.assertFalse(certs_api.cert_generation_enabled(self.course.id))
 
@@ -121,7 +124,8 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
             if it is explicitly enabled by setting
         """
         self.mock_app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS = True
-        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings',
+                        new=self.mock_app_settings):
             course = CourseFactory.create(self_paced=False)
             signals.toggle_self_generated_certs(course.id, course.self_paced)
             self.assertTrue(certs_api.cert_generation_enabled(course.id))
@@ -135,10 +139,13 @@ class CertsSettingsSignalsTest(LMSCertSignalsTestCase):
         DEFAULT_MODE.min_price = 0
         DEFAULT_MODE.currency = 'usd'
 
-        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.DEFAULT_MODE', new=DEFAULT_MODE):
-            with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.DEFAULT_MODE_SLUG', new='honor'):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.'
+                        'DEFAULT_MODE', new=DEFAULT_MODE):
+            with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.CourseMode.'
+                            'DEFAULT_MODE_SLUG', new='honor'):
                 with self.assertRaises(CourseMode.DoesNotExist):
-                    mode = CourseMode.objects.get(course_id=self.course.id, mode_slug='honor', mode_display_name='Honor')
+                    mode = CourseMode.objects.get(course_id=self.course.id, mode_slug='honor',
+                                                  mode_display_name='Honor')
 
                 signals._default_mode_on_course_pre_publish(self.store, self.course.id)
                 mode = CourseMode.objects.get(
@@ -160,18 +167,19 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
         if certificates feature is not enabled.
     """
 
-
     def fake_get_storage_class(foo):
         return FakeStaticStorage
 
-    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class)
+    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class',
+                new=fake_get_storage_class)
     def test_store_theme_signature_img_as_asset(self):
         """ Verify that an file passed as a signature image is stored as a course content asset
         """
         asset_file = "demo-sig1.png"
         signals.store_theme_signature_img_as_asset(self.course.id, asset_file)
 
-    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class)
+    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class',
+                new=fake_get_storage_class)
     def test_make_default_cert_string(self):
         """ Verify helper function generates a string for default certificate creation
             that can be deserialized to a dictionary with proper values
@@ -180,7 +188,8 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
 
         self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = {}
         self.mock_app_settings.ACTIVATE_DEFAULT_CERTS = True
-        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings', new=self.mock_app_settings):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings',
+                        new=self.mock_app_settings):
 
             cert_string = signals.make_default_cert(self.course.id)
             cert_dict = json.loads(cert_string)
@@ -242,7 +251,8 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
             self.assertEqual(signatories[0]['title'], 'Sømé Tîtlë')
             self.assertEqual(signatories[0]['organization'], 'órg®ñÏzåtïøn')
 
-    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class', new=fake_get_storage_class)
+    @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class',
+                new=fake_get_storage_class)
     @certs_feature_enabled
     def test_make_default_active_cert(self):
         """Verify creation of a default active certificate matching the default cert string."""
@@ -265,6 +275,7 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
         signals._make_default_active_certificate('foo', self.course.id)
         # self.assertEqual(len(self.course.certificates), 0)
 
-        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.app_settings.USE_OPEN_ENDED_CERTS_DEFAULTS', new=True):
+        with mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.'
+                        'signals.app_settings.USE_OPEN_ENDED_CERTS_DEFAULTS', new=True):
             signals._make_default_active_certificate('foo', self.course.id)
             # self.assertEqual(len(self.course.certificates), 1)

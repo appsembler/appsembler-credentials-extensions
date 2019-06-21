@@ -12,7 +12,8 @@ ENV_TOKENS = getattr(settings, "ENV_TOKENS", {}).get('APPSEMBLER_FEATURES', {})
 ENABLE_CREDITS_EXTRA_FIELDS = ENV_TOKENS.get("ENABLE_CREDITS_EXTRA_FIELDS", False)
 CREDIT_PROVIDERS = ENV_TOKENS.get("CREDIT_PROVIDERS", [])
 CREDIT_PROVIDERS_DEFAULT = ENV_TOKENS.get("CREDIT_PROVIDERS_DEFAULT", None)
-DEFAULT_ACCREDITATION_HELP = _("Additional or alternative explanation of accreditation conferred, standards met, or similar description.")
+DEFAULT_ACCREDITATION_HELP = _("Additional or alternative explanation of accreditation conferred, "
+                               "standards met, or similar description.")
 ACCREDITATION_CONFERRED_HELP = ENV_TOKENS.get("ACCREDITATION_CONFERRED_HELP", DEFAULT_ACCREDITATION_HELP)
 
 # so far these are just used by NYIF but go on their certs

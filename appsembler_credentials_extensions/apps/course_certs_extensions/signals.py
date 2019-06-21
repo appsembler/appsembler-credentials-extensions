@@ -73,7 +73,8 @@ def make_default_cert(course_key):
                 sig_img_path = store_theme_signature_img_as_asset(course_key, theme_asset_path)
                 default_cert_signatory['signature_image_path'] = sig_img_path
             except KeyError:
-                raise store_certificates.CertificateValidationError("You cannot store a signatory without a signature path")
+                raise store_certificates.CertificateValidationError(
+                    "You cannot store a signatory without a signature path")
             updated.append(default_cert_signatory)
         default_cert_signatories = json.dumps(updated)
         return default_cert.format(str(app_settings.ACTIVATE_DEFAULT_CERTS).lower(), default_cert_signatories)
@@ -168,7 +169,7 @@ def enable_self_generated_certs(sender, course_key, **kwargs):  # pylint: disabl
 # if I could figure out how to monkeypatch a decorated function properly
 # could just monkeypatch the task
 @receiver(COURSE_PACING_CHANGE, dispatch_uid="appsembler_course_pacing_changed")
-def _listen_for_course_pacing_changed(sender, course_key, course_self_paced, **kwargs):  # pylint: disable=unused-argument
+def _listen_for_course_pacing_changed(sender, course_key, course_self_paced, **kwargs):
     """
     Catch the signal that course pacing has changed.and
 
@@ -226,7 +227,7 @@ def _make_default_active_certificate(sender, course_key, replace=False, force=Fa
 
     default_cert_data = make_default_cert(course_key)
     new_cert = store_certificates.CertificateManager.deserialize_certificate(course, default_cert_data)
-    if not 'certificates' in course.certificates.keys():
+    if 'certificates' not in course.certificates.keys():
         course.certificates['certificates'] = []
     if replace:
         course.certificates['certificates'] = [new_cert.certificate_data, ]

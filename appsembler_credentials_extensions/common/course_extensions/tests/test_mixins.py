@@ -3,12 +3,8 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import importlib
 import mock
 
-from django.conf import settings
-
-from xblock.fields import Scope, String, XBlockMixin
 from xmodule import course_module
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
@@ -39,22 +35,25 @@ class CourseMixinsTestCase(ModuleStoreTestCase):
         self.assertNotIn(mixins.CreditsMixin, extra_classes)
         self.assertNotIn(mixins.InstructionTypeMixin, extra_classes)
 
-        with mock.patch('appsembler_credentials_extensions.common.course_extensions.settings.ENABLE_CREDITS_EXTRA_FIELDS', new=True):
+        with mock.patch('appsembler_credentials_extensions.common.course_extensions.settings.'
+                        'ENABLE_CREDITS_EXTRA_FIELDS', new=True):
             extra_classes = mixins.get_CourseDescriptor_mixins()
             self.assertIn(mixins.CreditsMixin, extra_classes)
 
-        with mock.patch('appsembler_credentials_extensions.common.course_extensions.settings.ENABLE_INSTRUCTION_TYPE_EXTRA_FIELDS', new=True):
+        with mock.patch('appsembler_credentials_extensions.common.course_extensions.settings.'
+                        'ENABLE_INSTRUCTION_TYPE_EXTRA_FIELDS', new=True):
             extra_classes = mixins.get_CourseDescriptor_mixins()
             self.assertIn(mixins.InstructionTypeMixin, extra_classes)
 
     def test_credits_mixin_fields(self):
         """ Verify proper fields are added, field values are correct."""
 
-        # TODO: is there a better way to do this instead of forcing the update to _values here? can't seem to reload() the module
-        # and class fields and get new values from mocked TEST_CREDIT_PROVIDERS
+        # TODO: is there a better way to do this instead of forcing the update to _values here?
+        # can't seem to reload() the module and class fields and get new values from mocked TEST_CREDIT_PROVIDERS
         mixins.CreditsMixin.credit_provider._values = mixins.build_field_values(TEST_CREDIT_PROVIDERS)
         course = CourseFactory.create()
-        course.__class__ = type(str('CourseDescriptorWithCredits'), (course_module.CourseDescriptor, mixins.CreditsMixin), {})
+        course.__class__ = type(str('CourseDescriptorWithCredits'),
+                                (course_module.CourseDescriptor, mixins.CreditsMixin), {})
         field_keys = course.fields.keys()
         self.assertIn('credit_provider', field_keys)
         self.assertIn('credits', field_keys)
@@ -68,7 +67,7 @@ class CourseMixinsTestCase(ModuleStoreTestCase):
 
         # can't set a default that's not in the CREDIT_PROVIDERS values
         with self.assertRaises(ValueError):
-            new_provider_field = fields.DefaultEnforcedString(
+            new_provider_field = fields.DefaultEnforcedString(  # noqa
                 values=mixins.build_field_values(TEST_CREDIT_PROVIDERS),
                 default='not_in_values'
             )
@@ -80,7 +79,8 @@ class CourseMixinsTestCase(ModuleStoreTestCase):
         mixins.InstructionTypeMixin.instructional_method._values = mixins.build_field_values(TEST_INSTRUCTIONAL_METHOD)
         mixins.InstructionTypeMixin.instruction_location._values = mixins.build_field_values(TEST_INSTRUCTION_LOCATION)
         course = CourseFactory.create()
-        course.__class__ = type(str('CourseDescriptorWithCredits'), (course_module.CourseDescriptor, mixins.InstructionTypeMixin), {})
+        course.__class__ = type(str('CourseDescriptorWithCredits'),
+                                (course_module.CourseDescriptor, mixins.InstructionTypeMixin), {})
         field_keys = course.fields.keys()
         self.assertIn('field_of_study', field_keys)
         self.assertIn('instructional_method', field_keys)
@@ -101,14 +101,14 @@ class CourseMixinsTestCase(ModuleStoreTestCase):
 
         # can't set a default that's not in the INSTRUCTIONAL_METHOD values
         with self.assertRaises(ValueError):
-            new_instructional_method_field = fields.DefaultEnforcedString(
+            new_instructional_method_field = fields.DefaultEnforcedString(  # noqa
                 values=mixins.build_field_values(TEST_INSTRUCTIONAL_METHOD),
                 default='not_in_values'
             )
 
         # can't set a default that's not in the INSTRUCTION_LOCATION values
         with self.assertRaises(ValueError):
-            new_instruction_location_field = fields.DefaultEnforcedString(
+            new_instruction_location_field = fields.DefaultEnforcedString(  # noqa
                 values=mixins.build_field_values(TEST_INSTRUCTION_LOCATION),
                 default='not_in_values'
             )
