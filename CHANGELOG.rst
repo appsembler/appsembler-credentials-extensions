@@ -15,6 +15,8 @@ Change Log
 Unreleased
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+* flake8 tests, Hawthorn tests
+
 [0.1.3] - 2019-05-27
 
 * Update author
