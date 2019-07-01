@@ -7,7 +7,7 @@ python:
   # - 3.6
 
 env:
-  - TOXENV=py27-edx_platform_ginkgo
+  - TOXENV=flake8
 
 # matrix:
 #   include:

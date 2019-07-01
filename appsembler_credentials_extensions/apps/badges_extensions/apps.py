@@ -16,4 +16,4 @@ class AppsemblerCredentialsBadgesConfig(AppConfig):
 
     def ready(self):
         """Do stuff after app is ready."""
-        from . import signals
+        from . import signals  # noqa: F401

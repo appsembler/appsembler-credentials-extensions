@@ -11,14 +11,13 @@ from xblock.fields import Scope, String, XBlockMixin
 from xmodule import course_module
 from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
-
-if hasattr(settings, 'STUDIO_NAME'):  # cms
-    from ..helpers import cms_import_helper
-    cms_import_helper()
-
 from lms.djangoapps.certificates.views import webview
 
-from .. import monkeypatch
+if hasattr(settings, 'STUDIO_NAME'):  # cms
+    from ..helpers import cms_import_helper  # noqa: F402
+    cms_import_helper()
+
+from .. import monkeypatch  # noqa: F401
 
 
 class FakeExtensionMixin(XBlockMixin):

@@ -13,14 +13,13 @@ from certificates.signals import toggle_self_generated_certs
 
 from appsembler_credentials_extensions.common.course_extensions.mixins import get_CourseDescriptor_mixins
 
+from lms.djangoapps.certificates.views import webview
 
 logger = logging.getLogger(__name__)
 
 if hasattr(settings, 'STUDIO_NAME'):  # cms
     from .helpers import cms_import_helper
     cms_import_helper()
-
-from lms.djangoapps.certificates.views import webview
 
 
 def _update_course_context(request, context, course, platform_name):
@@ -33,14 +32,17 @@ def _update_course_context(request, context, course, platform_name):
         for f in mixin.fields:
             context[f] = getattr(course, f)
 
-logger.warn('Monkeypatching lms.djangoapps.certificates.views.webview._update_course_context to extend with Appsembler Mixin fields')
+
+logger.warn('Monkeypatching lms.djangoapps.certificates.views.webview._update_course_context '
+            'to extend with Appsembler Mixin fields')
 orig__update_course_context = webview._update_course_context
 webview._update_course_context = _update_course_context
 
 # replace certificates handler which always enables self-gen'd certs for self-paced courses
 # with ours that only enables self-gen'd certs on self-paced if we set feature flag for it
 # we have to disable celery tasks already registered for signal handlers in edx-platform
-logger.warn('Monkeypatching lms.djangoapps.certificates.signals.toggle_self_generated_certs to limit enabling of self-generated certs on self-paced courses by feature flag.')
+logger.warn('Monkeypatching lms.djangoapps.certificates.signals.toggle_self_generated_certs to '
+            'limit enabling of self-generated certs on self-paced courses by feature flag.')
 orig_toggle_self_generated_certs = toggle_self_generated_certs
 orig_toggle_self_generated_certs_fullpath = toggle_self_generated_certs_fullpath
 orig_toggle_self_generated_certs.delay = lambda course_key, enable: None

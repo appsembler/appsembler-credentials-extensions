@@ -19,8 +19,8 @@ class AppsemblerCredentialsCourseCertsConfig(AppConfig):
 
     def ready(self):
         """Do stuff after app is ready."""
-        from . import monkeypatch  # no-qa
-        from . import signals  # no-qa
+        from . import monkeypatch  # noqa
+        from . import signals  # noqa
 
         # disable migrations outside of LMS environment
         if os.environ.get('SERVICE_VARIANT', '').lower() != 'lms':

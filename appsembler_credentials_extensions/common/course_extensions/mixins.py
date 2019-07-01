@@ -220,7 +220,8 @@ class InstructionTypeMixin(XBlockMixin):
 
     instruction_location = fields.DefaultEnforcedString(
         display_name=_("Instruction Location"),
-        help=_("Physical location of insruction; for cases where Open edX courseware is used in a specific physical setting"),
+        help=_("Physical location of insruction; for cases where Open edX courseware is "
+               "used in a specific physical setting"),
         values=build_field_values(COURSE_INSTRUCTION_LOCATIONS),
         default=COURSE_INSTRUCTION_LOCATION_DEFAULT,
         scope=Scope.settings,

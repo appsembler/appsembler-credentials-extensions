@@ -18,7 +18,8 @@ logger = logging.getLogger(__name__)
 
 def badges_feature_enabled(func):
     @wraps(func)
-    @mock.patch.dict('appsembler_credentials_extensions.apps.badges_extensions.signals.settings.FEATURES', {'ENABLE_OPENBADGES': True})
+    @mock.patch.dict('appsembler_credentials_extensions.apps.badges_extensions.signals.settings.FEATURES',
+                     {'ENABLE_OPENBADGES': True})
     def with_badges_enabled(*args, **kwargs):
         # reload to re-evaluate the decorated methods with new setting
         reload(signals)
@@ -53,7 +54,8 @@ class BadgeSignalsTestCase(ModuleStoreTestCase):
             badges off using our setting
         """
         self.mock_app_settings.DISABLE_COURSE_COMPLETION_BADGES = True
-        with mock.patch('appsembler_credentials_extensions.apps.badges_extensions.signals.app_settings', new=self.mock_app_settings):
+        with mock.patch('appsembler_credentials_extensions.apps.badges_extensions.signals.app_settings',
+                        new=self.mock_app_settings):
             signals._change_badges_setting_on_pre_publish('store', self.course.id)
             course = self.store.get_course(self.course.id)
             self.assertFalse(course.issue_badges)
