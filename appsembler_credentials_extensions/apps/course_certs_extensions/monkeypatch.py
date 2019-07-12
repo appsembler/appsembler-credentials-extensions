@@ -13,7 +13,6 @@ from certificates.signals import toggle_self_generated_certs
 
 from appsembler_credentials_extensions.common.course_extensions.mixins import get_CourseDescriptor_mixins
 
-from lms.djangoapps.certificates.views import webview
 
 logger = logging.getLogger(__name__)
 
@@ -33,10 +32,12 @@ def _update_course_context(request, context, course, platform_name):
             context[f] = getattr(course, f)
 
 
-logger.warn('Monkeypatching lms.djangoapps.certificates.views.webview._update_course_context '
-            'to extend with Appsembler Mixin fields')
-orig__update_course_context = webview._update_course_context
-webview._update_course_context = _update_course_context
+if not hasattr(settings, 'STUDIO_NAME'):  # only do this in LMS    
+    logger.warn('Monkeypatching lms.djangoapps.certificates.views.webview._update_course_context '
+                'to extend with Appsembler Mixin fields')
+    from lms.djangoapps.certificates.views import webview
+    orig__update_course_context = webview._update_course_context
+    webview._update_course_context = _update_course_context
 
 # replace certificates handler which always enables self-gen'd certs for self-paced courses
 # with ours that only enables self-gen'd certs on self-paced if we set feature flag for it
