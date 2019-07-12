@@ -12,12 +12,14 @@ Change Log
 .. There should always be an "Unreleased" section for changes pending release.
 
 
-Unreleased
+[0.1.4] - 2019-07-12
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * flake8 tests, Hawthorn tests
 
+
 [0.1.3] - 2019-05-27
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Update author
 * Never change `CertifiateGenerationCourseSetting` from enabled to disabled if the course is self-paced.
