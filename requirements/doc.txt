@@ -11,7 +11,7 @@ certifi==2018.4.16        # via requests
 cffi==1.11.5              # via cmarkgfm
 chardet==3.0.4            # via doc8, requests
 cmarkgfm==0.4.2           # via readme-renderer
-django==1.11.14
+django==1.11.23
 doc8==0.8.0
 docutils==0.14            # via doc8, readme-renderer, restructuredtext-lint, sphinx
 edx-sphinx-theme==1.3.0
