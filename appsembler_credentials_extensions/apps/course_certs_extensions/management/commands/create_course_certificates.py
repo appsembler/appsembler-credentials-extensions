@@ -44,7 +44,7 @@ class Command(BaseCommand):
                              action='store_true',
                              dest='all',
                              default=False,
-                             help='Reindex all courses')
+                             help='Make course certificates for all courses')
     replace_option = make_option('--replace',
                                  action='store_true',
                                  dest='replace',
