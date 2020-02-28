@@ -32,7 +32,7 @@ def _update_course_context(request, context, course, platform_name):
             context[f] = getattr(course, f)
 
 
-if not hasattr(settings, 'STUDIO_NAME'):  # only do this in LMS    
+if not hasattr(settings, 'STUDIO_NAME'):  # only do this in LMS
     logger.warn('Monkeypatching lms.djangoapps.certificates.views.webview._update_course_context '
                 'to extend with Appsembler Mixin fields')
     from lms.djangoapps.certificates.views import webview
