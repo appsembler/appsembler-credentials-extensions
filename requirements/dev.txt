@@ -10,7 +10,7 @@ chardet==3.0.4            # via requests
 click-log==0.1.8          # via edx-lint
 click==6.7                # via click-log, edx-lint, pip-tools
 diff-cover==1.0.4
-django==1.11.23           # via edx-i18n-tools
+django==1.11.28           # via edx-i18n-tools
 edx-i18n-tools==0.4.7
 edx-lint==0.5.5
 first==2.0.1              # via pip-tools
