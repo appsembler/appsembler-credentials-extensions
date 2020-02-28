@@ -16,6 +16,7 @@ Change Log
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * flake8 tests, Hawthorn tests
+* Avoid Django settings import from monkeypatch in CMS.
 
 
 [0.1.3] - 2019-05-27
