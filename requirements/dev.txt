@@ -36,7 +36,7 @@ pylint-plugin-utils==0.4  # via pylint-celery, pylint-django
 pylint==1.7.1             # via edx-lint, pylint-celery, pylint-django, pylint-plugin-utils
 pyparsing==2.0.7          # via packaging
 pytz==2018.5              # via django
-pyyaml==3.13              # via edx-i18n-tools
+pyyaml==5.1               # via edx-i18n-tools
 requests-toolbelt==0.8.0  # via twine
 requests==2.20.0          # via requests-toolbelt, twine
 six==1.11.0               # via astroid, diff-cover, edx-i18n-tools, edx-lint, packaging, pip-tools, pylint, tox
