@@ -6,7 +6,7 @@
 #
 appdirs==1.4.3            # via virtualenv
 astroid==1.5.2            # via edx-lint, pylint, pylint-celery
-bleach==3.1.2             # via readme-renderer
+bleach==3.1.4             # via readme-renderer
 certifi==2018.4.16        # via requests
 cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via requests
