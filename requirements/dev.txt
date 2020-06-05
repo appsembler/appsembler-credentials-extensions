@@ -15,7 +15,7 @@ click==7.0                # via click-log, edx-lint, pip-tools
 cryptography==2.8         # via secretstorage
 diff-cover==2.6.0         # via -r dev.in
 distlib==0.3.0            # via virtualenv
-django==2.2.10            # via edx-i18n-tools
+django==2.2.13            # via edx-i18n-tools
 docutils==0.16            # via readme-renderer
 edx-i18n-tools==0.5.0     # via -r dev.in
 edx-lint==0.5.5           # via -r dev.in
