@@ -27,6 +27,8 @@ def root(*args):
 PROJECT_ROOT = path(__file__).abspath().dirname()
 COMMON_TEST_DATA_ROOT = PROJECT_ROOT / "tests" / "data"
 
+LMS_INTERNAL_ROOT_URL = "localhost"
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

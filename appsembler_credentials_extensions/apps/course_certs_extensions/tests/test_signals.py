@@ -236,6 +236,7 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
             self.assertEqual(signatories[0]['title'], 'Some Title, Other Title')
             self.assertEqual(signatories[0]['organization'], 'organization')
 
+            # test for unicode handling
             self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = [
                 {
                     "name": "Ñámè Öñê",
@@ -250,6 +251,40 @@ class CertsCreationSignalsTest(BaseCertSignalsTestCase):
             self.assertEqual(signatories[0]['name'], 'Ñámè Öñê')
             self.assertEqual(signatories[0]['title'], 'Sømé Tîtlë')
             self.assertEqual(signatories[0]['organization'], 'órg®ñÏzåtïøn')
+
+            # test using newer config style with 'default' key
+            self.mock_app_settings.DEFAULT_CERT_SIGNATORIES = {
+                'default': [
+                    {
+                        "name": "Name One",
+                        "title": "Some Title, Other Title",
+                        "organization": "organization",
+                        "signature_image_path": "demo-sig1.png"
+                    },
+                ]
+            }
+            cert_string = signals.make_default_cert(self.course.id)
+            cert_dict = json.loads(cert_string)
+            signatories = cert_dict["signatories"]
+            self.assertEqual(signatories[0]['name'], 'Name One')
+            self.assertEqual(signatories[0]['title'], 'Some Title, Other Title')
+            self.assertEqual(signatories[0]['organization'], 'organization')
+
+            # test org-specific override
+            self.mock_app_settings.DEFAULT_CERT_SIGNATORIES['FIXME_SOME_ORG'] = [
+                {
+                    "name": "Name From Other Org",
+                    "title": "Title from Other Org",
+                    "organization": "other organization",
+                    "signature_image_path": "demo-sig2.png"
+                },
+            ]
+            cert_string = signals.make_default_cert(self.course.id)
+            cert_dict = json.loads(cert_string)
+            signatories = cert_dict["signatories"]
+            self.assertEqual(signatories[0]['name'], 'Name From Other Org')
+            self.assertEqual(signatories[0]['title'], 'Title from Other Org')
+            self.assertEqual(signatories[0]['organization'], 'other organization')
 
     @mock.patch('appsembler_credentials_extensions.apps.course_certs_extensions.signals.get_storage_class',
                 new=fake_get_storage_class)
