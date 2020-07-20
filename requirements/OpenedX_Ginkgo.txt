@@ -1,1 +1,3 @@
 -e git+https://github.com/appsembler/edx-platform.git@appsembler/ginkgo/master#egg=Open_edX
+django_nose==1.4.5  # compat with Django 1.11 for Hawthorn, to simplify
+pyparsing==2.0.7  # needed by common/lib/calc but we don't want to install rest of edx/requirements/pre.txt where it's normally installed

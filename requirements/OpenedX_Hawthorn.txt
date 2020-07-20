@@ -1,1 +1,1 @@
--e git+https://github.com/edx/edx-platform.git@open-release/hawthorn.master#egg=Open_edX
+-e git+https://github.com/appsembler/edx-platform.git@appsembler/hawthorn/master#egg=Open_edX

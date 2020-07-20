@@ -62,6 +62,19 @@ def make_default_cert(course_key):
 
     if app_settings.DEFAULT_CERT_SIGNATORIES:
         signatories = app_settings.DEFAULT_CERT_SIGNATORIES
+
+        # use org-specific signatories if defined for this course's org
+        if 'course_org_overrides' in signatories:
+            try:
+                signatories = signatories['course_org_overrides'][course_key.org]
+            except KeyError:
+                pass
+        else:
+            try:
+                signatories = signatories['default']
+            except KeyError:
+                pass  # some older configs won't have that key
+
         updated = []
         for i, sig in enumerate(signatories):
             default_cert_signatory = copy.deepcopy(sig)
@@ -147,6 +160,11 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
     course.certificates_display_behavior = 'early_with_info'
     course.certificates_show_before_end = True  # deprecated anyhow
     course.cert_html_view_enabled = True
+
+    # update certificate_html_view_overrides with any org-specific values
+    org_overrides = app_settings.CERTS_HTML_VIEW_COURSE_ORG_OVERRIDES.get(course_key.org, {})
+    course.cert_html_view_overrides.update(org_overrides)
+
     course.save()
     try:
         store.update_item(course, course._edited_by)

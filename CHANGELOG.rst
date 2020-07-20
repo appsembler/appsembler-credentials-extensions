@@ -11,6 +11,12 @@ Change Log
 
 .. There should always be an "Unreleased" section for changes pending release.
 
+[0.2.0] - 2020-07-08
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Update Makefile and test/tox infra
+* Use course org-specific overrides for signatories, where configured
+* Use course org-specific overrides cert_html_view_overrides advanced setting, where configured
 
 [0.1.4] - 2019-07-12
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
