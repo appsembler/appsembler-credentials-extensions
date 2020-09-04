@@ -155,55 +155,6 @@ def _change_cert_defaults_on_pre_publish(sender, course_key, **kwargs):  # pylin
         store.update_item(course, 0)
 
 
-@receiver(SignalHandler.course_published)
-@helpers.disable_if_certs_feature_off
-def enable_self_generated_certs(sender, course_key, **kwargs):  # pylint: disable=unused-argument
-    """
-    Enable/disable the self-generated certificates according to course-pacing.
-    """
-    course = CourseOverview.get_from_id(course_key)
-    toggle_self_generated_certs.delay(unicode(course_key), course.self_paced)
-
-
-# TODO: this isn't a monkeypatch but an additional signal handler
-# The original is retained but calls a patched noop task
-# if I could figure out how to monkeypatch a decorated function properly
-# could just monkeypatch the task
-@receiver(COURSE_PACING_CHANGED, dispatch_uid="appsembler_course_pacing_changed")
-def _listen_for_course_pacing_changed(sender, course_key, course_self_paced, **kwargs):
-    """
-    Catch the signal that course pacing has changed.and
-
-    Enable/disable the self-generated certificates according to course-pacing.
-    """
-    toggle_self_generated_certs.delay(unicode(course_key), course_self_paced)
-
-
-@task
-def toggle_self_generated_certs(course_key, course_self_paced):
-    """
-    Enable or disable self-generated certificates for a course according to pacing.
-
-    Enable self-generated certificates on course if:
-    course is a self-paced course and self-generated certs on self-paced not explicitly disabled
-    course is not self-paced and self-generated certs are explicitly enabled
-    """
-    course_key = unicode(course_key)
-    course_key = CourseKey.from_string(course_key)
-    if CertificateGenerationCourseSetting.is_enabled_for_course(course_key) and course_self_paced is True:
-        # Catch possible edge case which may happen during upgrades:
-        # Never change an enabled active config for a self-paced course to disabled
-        logger.warn("""
-            toggle_self_generated_certs won't override an enabled CertificateGenerationCourseSetting
-            with a disabled one on a course being changed (or probably re-saved) as self-paced.
-            """)
-        return
-    enable = False if app_settings.DISABLE_SELF_GENERATED_CERTS_FOR_SELF_PACED is True else \
-        (course_self_paced or app_settings.ALWAYS_ENABLE_SELF_GENERATED_CERTS)
-
-    CertificateGenerationCourseSetting.set_enabled_for_course(course_key, enable)
-
-
 @receiver(SignalHandler.pre_publish)
 @helpers.disable_if_certs_feature_off
 @helpers.cms_only
