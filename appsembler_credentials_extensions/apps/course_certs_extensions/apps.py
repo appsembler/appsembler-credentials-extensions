@@ -19,12 +19,11 @@ class AppsemblerCredentialsCourseCertsConfig(AppConfig):
 
     def ready(self):
         """Do stuff after app is ready."""
-        from . import monkeypatch  # noqa
         from . import signals  # noqa
 
         # disable migrations outside of LMS environment
         if os.environ.get('SERVICE_VARIANT', '').lower() != 'lms':
             # starting Django 1.9 can just set this to `None`
             settings.MIGRATION_MODULES.update({
-                'appsembler_course_certs_extensions': "nomigrations"
+                'appsembler_course_certs_extensions': None
             })

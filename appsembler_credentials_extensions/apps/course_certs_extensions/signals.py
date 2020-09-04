@@ -27,11 +27,11 @@ except ImportError:
 
 # don't import from lms.djangoapps.certificates here or it will
 # mess up app registration
-from certificates.models import CertificateGenerationCourseSetting
+from lms.djangoapps.certificates.models import CertificateGenerationCourseSetting
 from course_modes.models import CourseMode
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from openedx.core.djangoapps.models.course_details import COURSE_PACING_CHANGE
+from openedx.core.djangoapps.content.course_overviews.signals import COURSE_PACING_CHANGED
 from xmodule.contentstore.django import contentstore
 from xmodule.contentstore.content import StaticContent
 from xmodule.modulestore.django import SignalHandler, modulestore
@@ -186,7 +186,7 @@ def enable_self_generated_certs(sender, course_key, **kwargs):  # pylint: disabl
 # The original is retained but calls a patched noop task
 # if I could figure out how to monkeypatch a decorated function properly
 # could just monkeypatch the task
-@receiver(COURSE_PACING_CHANGE, dispatch_uid="appsembler_course_pacing_changed")
+@receiver(COURSE_PACING_CHANGED, dispatch_uid="appsembler_course_pacing_changed")
 def _listen_for_course_pacing_changed(sender, course_key, course_self_paced, **kwargs):
     """
     Catch the signal that course pacing has changed.and
