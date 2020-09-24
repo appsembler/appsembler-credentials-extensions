@@ -67,12 +67,12 @@ def make_default_cert(course_key):
         if 'course_org_overrides' in signatories:
             try:
                 signatories = signatories['course_org_overrides'][course_key.org]
-            except KeyError:
+            except (KeyError, TypeError):
                 pass
         else:
             try:
                 signatories = signatories['default']
-            except KeyError:
+            except (KeyError, TypeError):
                 pass  # some older configs won't have that key
 
         updated = []
