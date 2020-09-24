@@ -9,18 +9,9 @@ Overview
 This package contains apps and tools to change or add functionality to various types of credentials within the Open edX 
 services.  It is designed to be installed in the virtual env for the core LMS and CMS (Studio) services.  
 
-``appsembler_credentials_extensions`` is currently compatible with the Ginkgo release of Open edX.
+``appsembler_credentials_extensions`` is currently compatible with the Hawthorn release of Open edX.
 
-Course certificates and possibly badges will eventually move to the `credentials` package, so this package may need to be reworked to run in that service, or in both services.  
-
-This package contains two Django apps, ``badges_extensions`` and ``course_certs_extensions``, and a separate module ``course_extensions``.  The Django apps can be used singly or together.  The ``course_extensions`` module will always be installed but its functionality is gated by feature flags.
-
-
-``badges_extensions`` app
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Currently provides just one feature:  A signal handler to turn off ``issue_badges`` on a course if the feature switch is enabled.
-At present, course completion badges don't work properly with the Badgr backend, so we use course group badging and have to turn off ``issue_badges`` on the course, which would otherwise create a (broken) course completion badge.
+This package contains the Django app, ``course_certs_extensions``.
 
 
 ``course_certs_extensions`` app
@@ -35,16 +26,10 @@ Provides improved behavior and usability around course certificates for some of 
 * Customers may use certificates on some courses and not others. 
 * Customers may need to set up course certificates on a large number of courses at once.
 * Customers may need to enable certificates on some self-paced courses but not others.
-* Customers may need to include data from course extension fields in the HTML certificate webview.
-
 
 This app automates the setup to use HTML course certificates normally done manually via Django admin or Studio.  These are all enabled
 via feature switches in ``*.env.json`` files.
 
-* Django data migration (LMS) to change any ``audit`` mode ``CourseModes`` to the default configured in the env.
-* Django data migration (LMS) to enable HTML certificates overall in the platform (creates enabled ``CertificateGenerationConfiguration``)
-* Django data migration (LMS) to enable and configure a ``CertificateHTMLViewConfiguration`` object based on settings
-* Signal handler on course pre-publish to create a ``CourseMode`` object in the default mode (usually 'honor' or other certificate-earning mode)
 * Signal handler on course pre-publish to set certificate-related course settings to good defaults for open-ended (no end date) courses
 
  - enable HTML View certs
@@ -52,31 +37,8 @@ via feature switches in ``*.env.json`` files.
  - include cert/grade info on dashboard
 
 * Signal handler on course pre-publish to create and activate (or keep inactive, depending on settings) a default course certificate, including signatories and signature images defined in platform configuration.  Signature images should be added to a ``cms/static/images`` folder in your theme and collected to the CMS static files directory.
-* Monkeypatch of lms.djangoapps.certificates.views.webview to include any additional fields added to ``CourseDescriptor`` via this package's ``course_extensions`` mixin classes.
 * Management command (CMS) to create and activate (or keep inactive, depending on settings) a course certificate for one, several, or all courses.  Also supports replacing existing default certificates.
 
-``course_extensions`` module
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This module provides some extension classes for ``CourseDescriptor`` to:
-
-* provide a lightweight alternative to edX's Credits implementation (from the ``credentials`` service).  It adds fields to define for a course: 
-
- - number of credits
- - credit provider
- - credit unit 
- - text description of accreditation conferred  
-
-* provide a lightweight set of metadata fields about the type of instruction provided by the course.  It adds fields to define for a course:
-
- - instructional method (e.g., mixed in-person/online; classroom)
- - instruction location (a physical location; e.g., a certain campus)
- - field of study
-
-* extend the OLX export/import methods to include fields from arbitrary mixin classes such as the above.
-* provides a field type which validates that field values are among the set of defined choices.
-
-This module uses monkeypatching to extend the ``xmodule.course_module.CourseDescriptor`` class with one or more of the above types of mixins as enabled by feature flags.
 
 How to Develop
 --------------
@@ -94,7 +56,6 @@ then add to INSTALLED_APPS:
 
    [ 
    "appsembler_credentials_extensions.apps.course_certs_extensions",
-   "appsembler_credentials_extensions.apps.badges_extensions",
    ]
 
 
@@ -106,7 +67,6 @@ Run the migrations:
    $ cd /appsembler/app/edxapp
    $ source edxapp_env
    $ cd edx-platform
-   $ ./manage.py lms migrate appsembler_course_certs_extensions
 
 then run the LMS or CMS service, like  ``$ ./manage.py lms runserver --settings=devstack_appsembler 8000``
 
