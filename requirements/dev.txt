@@ -27,7 +27,7 @@ diff-cover==3.0.1
     # via -r dev.in
 distlib==0.3.0
     # via virtualenv
-django==1.11.29
+django==2.2.24
     # via edx-i18n-tools
 docutils==0.16
     # via readme-renderer
@@ -123,6 +123,8 @@ six==1.15.0
     #   readme-renderer
     #   tox
     #   virtualenv
+sqlparse==0.4.1
+    # via django
 toml==0.10.1
     # via tox
 tox==3.15.2
