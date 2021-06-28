@@ -79,7 +79,7 @@ polib==1.1.0
     # via edx-i18n-tools
 py==1.9.0
     # via tox
-pygments==2.5.2
+pygments==2.7.4
     # via
     #   diff-cover
     #   readme-renderer
