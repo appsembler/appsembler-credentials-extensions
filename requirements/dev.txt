@@ -77,7 +77,7 @@ pluggy==0.13.1
     #   tox
 polib==1.1.0
     # via edx-i18n-tools
-py==1.9.0
+py==1.10.0
     # via tox
 pygments==2.7.4
     # via
