@@ -4,26 +4,39 @@
 #
 #    pip-compile --output-file=requirements/test.txt requirements/base.in requirements/test.in
 #
-atomicwrites==1.4.0       # via pytest
-attrs==19.3.0             # via pytest
-backports.functools-lru-cache==1.6.1  # via wcwidth
-configparser==4.0.2       # via importlib-metadata
-contextlib2==0.6.0.post1  # via importlib-metadata
-coverage==5.1             # via pytest-cov
-funcsigs==1.0.2           # via pytest
-importlib-metadata==1.6.1  # via pluggy, pytest
-mongomock==3.19.0         # via -r requirements/test.in
-more-itertools==5.0.0     # via pytest
-packaging==20.4           # via pytest
-pathlib2==2.3.5           # via importlib-metadata, pytest, pytest-django
-pluggy==0.13.1            # via pytest
-py==1.9.0                 # via pytest
-pytest-cov==2.10.0        # via -r requirements/test.in
-pytest-django==3.9.0      # via -r requirements/test.in
-pytest==4.6.11            # via pytest-cov, pytest-django
-pytz==2020.1              # via django
-scandir==1.10.0           # via pathlib2
-sentinels==1.0.0          # via mongomock
-six==1.15.0               # via mongomock, more-itertools, packaging, pathlib2, pytest
-wcwidth==0.2.5            # via pytest
-zipp==1.2.0               # via importlib-metadata
+atomicwrites==1.4.0
+    # via pytest
+attrs==19.3.0
+    # via pytest
+coverage==5.1
+    # via pytest-cov
+mongomock==3.19.0
+    # via -r test.in
+more-itertools==5.0.0
+    # via pytest
+packaging==20.4
+    # via pytest
+pluggy==0.13.1
+    # via pytest
+py==1.10.0
+    # via pytest
+pyparsing==3.0.6
+    # via packaging
+pytest==4.6.11
+    # via
+    #   pytest-cov
+    #   pytest-django
+pytest-cov==2.10.0
+    # via -r test.in
+pytest-django==3.9.0
+    # via -r test.in
+sentinels==1.0.0
+    # via mongomock
+six==1.15.0
+    # via
+    #   mongomock
+    #   more-itertools
+    #   packaging
+    #   pytest
+wcwidth==0.2.5
+    # via pytest
