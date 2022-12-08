@@ -12,7 +12,7 @@ astroid==2.3.3
     #   pylint-celery
 bleach==3.3.0
     # via readme-renderer
-certifi==2020.6.20
+certifi==2022.12.7
     # via requests
 chardet==3.0.4
     # via requests
@@ -44,7 +44,7 @@ idna==2.9
 importlib-metadata==1.6.1
     # via
     #   inflect
-    #   path.py
+    #   path-py
 inflect==3.0.2
     # via jinja2-pluralize
 isort==4.3.21
@@ -65,7 +65,7 @@ packaging==20.4
     # via
     #   bleach
     #   tox
-path.py==11.5.2
+path-py==11.5.2
     # via edx-i18n-tools
 pip-tools==5.2.1
     # via -r dev.in
