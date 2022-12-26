@@ -44,7 +44,7 @@ idna==2.9
 importlib-metadata==1.6.1
     # via
     #   inflect
-    #   path.py
+    #   path-py
 inflect==3.0.2
     # via jinja2-pluralize
 isort==4.3.21
@@ -65,7 +65,7 @@ packaging==20.4
     # via
     #   bleach
     #   tox
-path.py==11.5.2
+path-py==11.5.2
     # via edx-i18n-tools
 pip-tools==5.2.1
     # via -r dev.in
@@ -137,7 +137,7 @@ virtualenv==20.0.25
     # via tox
 webencodings==0.5.1
     # via bleach
-wheel==0.34.2
+wheel==0.38.1
     # via -r dev.in
 wrapt==1.11.2
     # via astroid
