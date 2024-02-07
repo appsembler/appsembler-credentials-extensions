@@ -47,7 +47,7 @@ setup(
     ],
     include_package_data=True,
     install_requires=[
-        "Django>=1.8,<2.1"
+        "Django>=1.8,<3.3"
     ],
     license="Apache Software License 2.0",
     zip_safe=False,
